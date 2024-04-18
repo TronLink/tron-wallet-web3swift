@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
 
   s.homepage         = 'https://github.com/TronLink/TronWalletWeb3Swift'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'tronlinkdev' => 'tronlinkdev2024@gmail.com' }
+  s.author           = 'tronlinkdev'
   s.source           = { :git => 'https://github.com/TronLink/TronWalletWeb3Swift.git', :tag => s.version.to_s }
   s.platform = :ios, '10.0'
   s.ios.deployment_target = '10.0'
