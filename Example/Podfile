@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '10.0'
+
+target 'TronWalletWeb3Swift_Example' do
+  pod 'TronWalletWeb3Swift', :path => '../'
+
+  target 'TronWalletWeb3Swift_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
