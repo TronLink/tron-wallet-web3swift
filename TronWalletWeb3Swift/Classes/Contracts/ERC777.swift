@@ -36,28 +36,28 @@ public class ERC777 {
     
     /// Returns token name / description
     public func name() throws -> String {
-        return try address.call("name()").wait().string()
+        return try address.call("name()", web3: Web3.default).wait().string()
     }
     
     /// Returns token symbol
     public func symbol() throws -> String {
-        return try address.call("symbol()").wait().string()
+        return try address.call("symbol()", web3: Web3.default).wait().string()
     }
     
     /// Returns token total supply
     public func totalSupply() throws -> BigUInt {
-        return try address.call("totalSupply()").wait().uint256()
+        return try address.call("totalSupply()", web3: Web3.default).wait().uint256()
     }
     
     /// Returns token decimals
     public func decimals() throws -> BigUInt {
-        return try address.call("decimals()").wait().uint256()
+        return try address.call("decimals()", web3: Web3.default).wait().uint256()
     }
     
     
     /// - Returns: User balance in wei
     public func balance(of user: Address) throws -> BigUInt {
-        return try address.call("balanceOf(address)",user).wait().uint256()
+        return try address.call("balanceOf(address)",user, web3: Web3.default).wait().uint256()
     }
     
     /**
@@ -73,7 +73,9 @@ public class ERC777 {
      ```
      */
     public func allowance(from owner: Address, to spender: Address) throws -> BigUInt {
-        return try address.call("allowance(address,address)",owner,spender).wait().uint256()
+        let arguments = [owner, spender]
+        let web3 = Web3.default
+        return try address.call("allowance(address,address)", arguments, web3: web3).wait().uint256()
     }
     
     /**
@@ -90,7 +92,9 @@ public class ERC777 {
      ```
      */
     public func transfer(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
-		return try address.send("transfer(address,uint256)",user,amount, password: password, options: options).wait()
+        let arguments = [user, amount] as [Any]
+        let web3 = Web3.default
+        return try address.send("transfer(address,uint256)", arguments, password: password, web3: web3, options: options).wait()
     }
     
     /**
@@ -107,7 +111,9 @@ public class ERC777 {
      ```
      */
     public func approve(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("approve(address,uint256)",user,amount, password: password, options: options).wait()
+        let arguments = [user, amount] as [Any]
+        let web3 = Web3.default
+        return try address.send("approve(address,uint256)", arguments, password: password, web3: web3, options: options).wait()
     }
     
     /**
@@ -126,7 +132,9 @@ public class ERC777 {
      ```
      */
     public func transfer(from: Address, to: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("transferFrom(address,address,uint256)",from,to,amount, password: password, options: options).wait()
+        let arguments = [from, to, amount] as [Any]
+        let web3 = Web3.default
+        return try address.send("transferFrom(address,address,uint256)", arguments, password: password, web3: web3, options: options).wait()
     }
     
     /**
@@ -142,7 +150,9 @@ public class ERC777 {
      ```
      */
     public func send(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("send(address,uint256)",user,amount, password: password, options: options).wait()
+        let arguments = [user, amount] as [Any]
+        let web3 = Web3.default
+        return try address.send("send(address,uint256)", arguments, password: password, web3: web3, options: options).wait()
     }
     /**
      Sends to user some amount of tokens and call some function
@@ -158,9 +168,10 @@ public class ERC777 {
      ```
      */
     public func send(to user: Address, amount: BigUInt, userData: Data) throws -> TransactionSendingResult {
-        return try address.send("send(address,uint256,bytes)",user,amount,userData, password: password, options: options).wait()
+        let arguments = [user, amount, userData] as [Any]
+        let web3 = Web3.default
+        return try address.send("send(address,uint256,bytes)", arguments, password: password, web3: web3, options: options).wait()
     }
-    
     
     /**
      Authorize user to manager your tokens
@@ -174,7 +185,7 @@ public class ERC777 {
      ```
      */
     public func authorize(operator user: Address) throws -> TransactionSendingResult {
-        return try address.send("authorizeOperator(address)",user, password: password, options: options).wait()
+        return try address.send("authorizeOperator(address)",user, password: password, web3: Web3.default, options: options).wait()
     }
     /**
      Revokes operator
@@ -188,7 +199,7 @@ public class ERC777 {
      ```
      */
     public func revoke(operator user: Address) throws -> TransactionSendingResult {
-        return try address.send("revokeOperator(address)",user, password: password, options: options).wait()
+        return try address.send("revokeOperator(address)",user, password: password, web3: Web3.default, options: options).wait()
     }
     
     /**
@@ -204,7 +215,9 @@ public class ERC777 {
      ```
      */
     public func isOperatorFor(operator user: Address, tokenHolder: Address) throws -> Bool {
-        return try address.call("isOperatorFor(address,address)",user,tokenHolder).wait().bool()
+        let arguments = [user, tokenHolder]
+        let web3 = Web3.default
+        return try address.call("isOperatorFor(address,address)", arguments, web3: web3).wait().bool()
     }
     
     /**
@@ -222,7 +235,9 @@ public class ERC777 {
      ```
      */
     public func operatorSend(from: Address, to: Address, amount: BigUInt, userData: Data) throws -> TransactionSendingResult {
-        return try address.send("operatorSend(address,address,uint256,bytes)",from,to,amount,userData, password: password, options: options).wait()
+        let arguments = [from, to, amount, userData] as [Any]
+        let web3 = Web3.default
+        return try address.send("operatorSend(address,address,uint256,bytes)", arguments, password: password, web3: web3, options: options).wait()
     }
 	
 	/**
@@ -243,39 +258,51 @@ public class ERC777 {
 		}
 		
 		/// - Returns: gas price for transfer(address,uint256) transaction
-		public func transfer(to user: Address, amount: BigUInt) throws -> BigUInt {
-			return try address.estimateGas("transfer(address,uint256)",user,amount, options: options).wait()
-		}
+        public func transfer(to user: Address, amount: BigUInt) throws -> BigUInt {
+            let arguments = [user, amount] as [Any]
+            let web3 = Web3.default
+            return try address.estimateGas("transfer(address,uint256)", arguments, web3: web3, options: options).wait()
+        }
 		/// - Returns: gas price for approve(address,uint256) transaction
-		public func approve(to user: Address, amount: BigUInt) throws -> BigUInt {
-			return try address.estimateGas("approve(address,uint256)",user,amount, options: options).wait()
-		}
+        public func approve(to user: Address, amount: BigUInt) throws -> BigUInt {
+            let arguments = [user, amount] as [Any]
+            let web3 = Web3.default
+            return try address.estimateGas("approve(address,uint256)", arguments, web3: web3, options: options).wait()
+        }
 		/// - Returns: gas price for transferFrom(address,address,uint256) transaction
-		public func transfer(from: Address, to: Address, amount: BigUInt) throws -> BigUInt {
-			return try address.estimateGas("transferFrom(address,address,uint256)",from,to,amount, options: options).wait()
-		}
+        public func transfer(from: Address, to: Address, amount: BigUInt) throws -> BigUInt {
+            let arguments = [from, to, amount] as [Any]
+            let web3 = Web3.default
+            return try address.estimateGas("transferFrom(address,address,uint256)", arguments, web3: web3, options: options).wait()
+        }
 		
 		/// - Returns: gas price for send(address,uint256) transaction
-		public func send(to user: Address, amount: BigUInt) throws -> BigUInt {
-			return try address.estimateGas("send(address,uint256)",user,amount, options: options).wait()
-		}
+        public func send(to user: Address, amount: BigUInt) throws -> BigUInt {
+            let arguments = [user, amount] as [Any]
+            let web3 = Web3.default
+            return try address.estimateGas("send(address,uint256)", arguments, web3: web3, options: options).wait()
+        }
 		/// - Returns: gas price for send(address,uint256,bytes) transaction
-		public func send(to user: Address, amount: BigUInt, userData: Data) throws -> BigUInt {
-			return try address.estimateGas("send(address,uint256,bytes)",user,amount,userData, options: options).wait()
-		}
+        public func send(to user: Address, amount: BigUInt, userData: Data) throws -> BigUInt {
+            let arguments = [user, amount, userData] as [Any]
+            let web3 = Web3.default
+            return try address.estimateGas("send(address,uint256,bytes)", arguments, web3: web3, options: options).wait()
+        }
 		
 		/// - Returns: gas price for authorizeOperator(address) transaction
 		public func authorize(operator user: Address) throws -> BigUInt {
-			return try address.estimateGas("authorizeOperator(address)",user, options: options).wait()
+            return try address.estimateGas("authorizeOperator(address)",user, web3: Web3.default, options: options).wait()
 		}
 		/// - Returns: gas price for revokeOperator(address) transaction
 		public func revoke(operator user: Address) throws -> BigUInt {
-			return try address.estimateGas("revokeOperator(address)",user, options: options).wait()
+            return try address.estimateGas("revokeOperator(address)",user, web3: Web3.default, options: options).wait()
 		}
 		
 		/// - Returns: gas price for operatorSend(address,address,uint256,bytes) transaction
-		public func operatorSend(from: Address, to: Address, amount: BigUInt, userData: Data) throws -> BigUInt {
-			return try address.estimateGas("operatorSend(address,address,uint256,bytes)",from,to,amount,userData, options: options).wait()
-		}
+        public func operatorSend(from: Address, to: Address, amount: BigUInt, userData: Data) throws -> BigUInt {
+            let arguments = [from, to, amount, userData] as [Any]
+            let web3 = Web3.default
+            return try address.estimateGas("operatorSend(address,address,uint256,bytes)", arguments, web3: web3, options: options).wait()
+        }
 	}
 }
