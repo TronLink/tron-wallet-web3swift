@@ -8,15 +8,14 @@
 
 Pod::Spec.new do |s|
   s.name             = 'TronWalletWeb3Swift'
-  s.version          = '1.0.0'
+  s.version          = '1.0.1'
   s.summary          = 'TronWalletWeb3Swift is an iOS toolbelt for interaction with the Tron network.'
 
   s.homepage         = 'https://github.com/TronLink/TronWalletWeb3Swift'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = 'tronlinkdev'
   s.source           = { :git => 'https://github.com/TronLink/TronWalletWeb3Swift.git', :tag => s.version.to_s }
-  s.platform = :ios, '10.0'
-  s.ios.deployment_target = '10.0'
+  s.platform = :ios, '13.0'
 
   s.source_files = 'TronWalletWeb3Swift/Classes/**/*'
   
