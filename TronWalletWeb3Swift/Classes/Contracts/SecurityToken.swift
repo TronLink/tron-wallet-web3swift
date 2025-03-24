@@ -41,17 +41,17 @@ public class SecurityToken {
     }
     /// Returns token decimals
     public func decimals() throws -> BigUInt {
-        return try address.call("decimals()").wait().uint256()
+        return try address.call("decimals()", web3: Web3.default).wait().uint256()
     }
     
     /// Returns token total supply
     public func totalSupply() throws -> BigUInt {
-        return try address.call("totalSupply()").wait().uint256()
+        return try address.call("totalSupply()", web3: Web3.default).wait().uint256()
     }
     
     /// - Returns: User balance in wei
     public func balance(of owner: Address) throws -> BigUInt {
-        return try address.call("balanceOf(address)", owner).wait().uint256()
+        return try address.call("balanceOf(address)", owner, web3: Web3.default).wait().uint256()
     }
     
     /**
@@ -67,7 +67,9 @@ public class SecurityToken {
      ```
      */
     public func allowance(owner: Address, spender: Address) throws -> BigUInt {
-        return try address.call("allowance(address,address)", owner, spender).wait().uint256()
+        let arguments = [owner, spender]
+        let web3 = Web3.default
+        return try address.call("allowance(address,address)", arguments, web3: web3).wait().uint256()
     }
     
     /**
@@ -84,7 +86,7 @@ public class SecurityToken {
      ```
      */
     public func transfer(to: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("transfer(address,uint256)", to, amount).wait()
+        return try address.send("transfer(address,uint256)", to, amount, web3: Web3.default).wait()
     }
     
     /**
@@ -101,7 +103,9 @@ public class SecurityToken {
      - Returns: TransactionSendingResult
      */
     public func transfer(from: Address, to: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("transferFrom(address,address,uint256)", from, to, amount).wait()
+        let arguments = [from, to, amount] as [Any]
+        let web3 = Web3.default
+        return try address.send("transferFrom(address,address,uint256)", arguments, web3: web3).wait()
     }
     
     /**
@@ -118,17 +122,17 @@ public class SecurityToken {
      ```
      */
     public func approve(spender: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("approve(address,uint256)", spender, amount).wait()
+        return try address.send("approve(address,uint256)", spender, amount, web3: Web3.default).wait()
     }
     
     /// Decrease approved balance that spender can take from your address
     public func decreaseApproval(spender: Address, subtractedValue: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("decreaseApproval(address,uint256)", spender, subtractedValue).wait()
+        return try address.send("decreaseApproval(address,uint256)", spender, subtractedValue, web3: Web3.default).wait()
     }
     
     /// Increase approved balance that spender can take from your address
     public func increaseApproval(spender: Address, addedValue: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("increaseApproval(address,uint256)", spender, addedValue).wait()
+        return try address.send("increaseApproval(address,uint256)", spender, addedValue, web3: Web3.default).wait()
     }
     
     /**
@@ -139,7 +143,9 @@ public class SecurityToken {
      ```
      */
     public func verifyTransfer(from: Address, to: Address, value: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("verifyTransfer(address,address,value)", from, to, value).wait()
+        let arguments = [from, to, value] as [Any]
+        let web3 = Web3.default
+        return try address.send("verifyTransfer(address,address,value)", arguments, web3: web3).wait()
     }
     
     /**
@@ -154,7 +160,7 @@ public class SecurityToken {
      ```
      */
     public func mint(investor: Address, value: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("mint(address,uint256)", investor, value).wait()
+        return try address.send("mint(address,uint256)", investor, value, web3: Web3.default).wait()
     }
     
     /**
@@ -170,7 +176,9 @@ public class SecurityToken {
      ```
      */
     public func mint(investor: Address, value: BigUInt, data: Data) throws -> TransactionSendingResult {
-        return try address.send("mintWithData(address,uint256,bytes)", investor, value, data).wait()
+        let arguments = [investor, value, data] as [Any]
+        let web3 = Web3.default
+        return try address.send("mintWithData(address,uint256,bytes)", arguments, web3: web3).wait()
     }
     
     
@@ -186,7 +194,9 @@ public class SecurityToken {
      ```
      */
     public func burn(from: Address, value: BigUInt, data: Data) throws -> TransactionSendingResult {
-        return try address.send("burnFromWithData(address,uint256,bytes)", from, value, data).wait()
+        let arguments = [from, value, data] as [Any]
+        let web3 = Web3.default
+        return try address.send("burnFromWithData(address,uint256,bytes)", arguments, web3: web3).wait()
     }
     
     
@@ -201,7 +211,7 @@ public class SecurityToken {
      ```
      */
     public func burn(value: BigUInt, data: Data) throws -> TransactionSendingResult {
-        return try address.send("burnWithData(uint256 _value, bytes _data)", value, data).wait()
+        return try address.send("burnWithData(uint256 _value, bytes _data)", value, data, web3: Web3.default).wait()
     }
     
     /**
@@ -215,7 +225,9 @@ public class SecurityToken {
      ```
      */
     public func checkPermission(delegate: Address, module: Address, perm: Data) throws -> Bool {
-        return try address.call("checkPermission(address,address,bytes32)", delegate, module, perm).wait().bool()
+        let arguments = [delegate, module, perm] as [Any]
+        let web3 = Web3.default
+        return try address.call("checkPermission(address,address,bytes32)", arguments, web3: web3).wait().bool()
     }
     
     /// Module
@@ -255,7 +267,7 @@ public class SecurityToken {
      ```
      */
     public func module(at address: Address) throws -> Module {
-        let result = try self.address.call("getModule(address)", address).wait()
+        let result = try self.address.call("getModule(address)", address, web3: Web3.default).wait()
         let module = try Module(result)
         return module
     }
@@ -271,7 +283,7 @@ public class SecurityToken {
      ```
      */
     public func modules(with name: String) throws -> [Address] {
-        return try address.call("getModulesByName(bytes32)", name).wait().array { try $0.address() }
+        return try address.call("getModulesByName(bytes32)", name, web3: Web3.default).wait().array { try $0.address() }
     }
     
     /**
@@ -285,7 +297,7 @@ public class SecurityToken {
      ```
      */
     public func modules(with type: UInt8) throws -> [Address] {
-        return try address.call("getModulesByType(uint8)", type).wait().array { try $0.address() }
+        return try address.call("getModulesByType(uint8)", type, web3: Web3.default).wait().array { try $0.address() }
     }
     
     
@@ -299,7 +311,7 @@ public class SecurityToken {
      ```
      */
     public func totalSupply(at checkpointId: BigUInt) throws -> BigUInt {
-        return try address.call("totalSupplyAt(uint256)", checkpointId).wait().uint256()
+        return try address.call("totalSupplyAt(uint256)", checkpointId, web3: Web3.default).wait().uint256()
     }
     
     /**
@@ -313,7 +325,7 @@ public class SecurityToken {
      ```
      */
     public func balance(at investor: Address, checkpointId: BigUInt) throws -> BigUInt {
-        return try address.call("balanceOfAt(address,uint256)").wait().uint256()
+        return try address.call("balanceOfAt(address,uint256)", web3: Web3.default).wait().uint256()
     }
     
     /**
@@ -325,7 +337,7 @@ public class SecurityToken {
      ```
      */
     public func createCheckpoint() throws -> TransactionSendingResult {
-        return try address.send("createCheckpoint()").wait()
+        return try address.send("createCheckpoint()", web3: Web3.default).wait()
     }
     
     
@@ -340,7 +352,7 @@ public class SecurityToken {
      ```
      */
     public func investors() throws -> [Address] {
-        return try address.call("getInvestors()").wait().array { try $0.address() }
+        return try address.call("getInvestors()", web3: Web3.default).wait().array { try $0.address() }
     }
     
     /**
@@ -355,7 +367,7 @@ public class SecurityToken {
      ```
      */
     public func investors(at checkpointId: BigUInt) throws -> [Address] {
-        return try address.call("getInvestorsAt(uint256)").wait().array { try $0.address() }
+        return try address.call("getInvestorsAt(uint256)", web3: Web3.default).wait().array { try $0.address() }
     }
     
     /**
@@ -371,7 +383,9 @@ public class SecurityToken {
      ```
      */
     public func iterateInvestors(start: BigUInt, end: BigUInt) throws -> [Address] {
-        return try address.call("iterateInvestors(uint256,uint256)",start,end).wait().array { try $0.address() }
+        let arguments = [start, end]
+        let web3 = Web3.default
+        return try address.call("iterateInvestors(uint256,uint256)", arguments, web3: web3).wait().array { try $0.address() }
     }
     
     /**
@@ -384,7 +398,7 @@ public class SecurityToken {
      ```
      */
     public func currentCheckpointId() throws -> BigUInt {
-        return try address.call("currentCheckpointId()").wait().uint256()
+        return try address.call("currentCheckpointId()", web3: Web3.default).wait().uint256()
     }
     
     /**
@@ -398,7 +412,7 @@ public class SecurityToken {
      ```
      */
     public func investors(index: BigUInt) throws -> Address {
-        return try address.call("investors(uint256)", index).wait().address()
+        return try address.call("investors(uint256)", index, web3: Web3.default).wait().address()
     }
     
     /**
@@ -413,7 +427,7 @@ public class SecurityToken {
      ```
      */
     public func withdrawERC20(tokenContract: Address, value: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("withdrawERC20(address,uint256)", tokenContract, value).wait()
+        return try address.send("withdrawERC20(address,uint256)", tokenContract, value, web3: Web3.default).wait()
     }
     
     /**
@@ -427,7 +441,7 @@ public class SecurityToken {
      ```
      */
     public func changeModuleBudget(module: Address, budget: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("changeModuleBudget(address,uint256)", module, budget).wait()
+        return try address.send("changeModuleBudget(address,uint256)", module, budget, web3: Web3.default).wait()
     }
     
     /**
@@ -440,7 +454,7 @@ public class SecurityToken {
      ```
      */
     public func updateTokenDetails(newTokenDetails: String) throws -> TransactionSendingResult {
-        return try address.send("updateTokenDetails(string)", newTokenDetails).wait()
+        return try address.send("updateTokenDetails(string)", newTokenDetails, web3: Web3.default).wait()
     }
     
     /**
@@ -453,7 +467,7 @@ public class SecurityToken {
      ```
      */
     public func changeGranularity(granularity: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("changeGranularity(uint256)", granularity).wait()
+        return try address.send("changeGranularity(uint256)", granularity, web3: Web3.default).wait()
     }
     
     /**
@@ -468,7 +482,7 @@ public class SecurityToken {
      ```
      */
     public func pruneInvestors(start: BigUInt, iters: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("pruneInvestors(uint256,uint256)", start, iters).wait()
+        return try address.send("pruneInvestors(uint256,uint256)", start, iters, web3: Web3.default).wait()
     }
     
     /**
@@ -480,7 +494,7 @@ public class SecurityToken {
      ```
      */
     public func freezeTransfers() throws -> TransactionSendingResult {
-        return try address.send("freezeTransfers()").wait()
+        return try address.send("freezeTransfers()", web3: Web3.default).wait()
     }
     
     /**
@@ -492,7 +506,7 @@ public class SecurityToken {
      ```
      */
     public func unfreezeTransfers() throws -> TransactionSendingResult {
-        return try address.send("unfreezeTransfers()").wait()
+        return try address.send("unfreezeTransfers()", web3: Web3.default).wait()
     }
     
     /**
@@ -504,7 +518,7 @@ public class SecurityToken {
      ```
      */
     public func freezeMinting() throws -> TransactionSendingResult {
-        return try address.send("freezeMinting()").wait()
+        return try address.send("freezeMinting()", web3: Web3.default).wait()
     }
     
     /**
@@ -520,7 +534,7 @@ public class SecurityToken {
      ```
      */
     public func mintMulti(investors: [Address], values: [BigUInt]) throws -> TransactionSendingResult {
-        return try address.send("mintMulti(address[],uint256[])", investors, values).wait()
+        return try address.send("mintMulti(address[],uint256[])", investors, values, web3: Web3.default).wait()
     }
     
     /**
@@ -546,7 +560,9 @@ public class SecurityToken {
      ```
      */
     public func addModule(moduleFactory: Address, data: Data, maxCost: BigUInt, budget: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("addModule(address,bytes,uint256,uint256)", moduleFactory, data, maxCost, budget).wait()
+        let arguments = [moduleFactory, data, maxCost, budget] as [Any]
+        let web3 = Web3.default
+        return try address.send("addModule(address,bytes,uint256,uint256)", arguments, web3: web3).wait()
     }
     
     /**
@@ -559,7 +575,7 @@ public class SecurityToken {
      ```
      */
     public func archive(module: Address) throws -> TransactionSendingResult {
-        return try address.send("archiveModule(address)", module).wait()
+        return try address.send("archiveModule(address)", module, web3: Web3.default).wait()
     }
     
     /**
@@ -572,7 +588,7 @@ public class SecurityToken {
      ```
      */
     public func unarchive(module: Address) throws -> TransactionSendingResult {
-        return try address.send("unarchiveModule(address)", module).wait()
+        return try address.send("unarchiveModule(address)", module, web3: Web3.default).wait()
     }
     
     /**
@@ -585,7 +601,7 @@ public class SecurityToken {
      ```
      */
     public func remove(module: Address) throws -> TransactionSendingResult {
-        return try address.send("removeModule(address)", module).wait()
+        return try address.send("removeModule(address)", module, web3: Web3.default).wait()
     }
     
     /**
@@ -598,7 +614,7 @@ public class SecurityToken {
      ```
      */
     public func set(controller: Address) throws -> TransactionSendingResult {
-        return try address.send("setController(address)", module).wait()
+        return try address.send("setController(address)", module, web3: Web3.default).wait()
     }
     
     /**
@@ -615,7 +631,9 @@ public class SecurityToken {
      ```
      */
     public func forceTransfer(from: Address, to: Address, value: BigUInt, data: Data, log: Data) throws -> TransactionSendingResult {
-        return try address.send("forceTransfer(address,address,uint256,bytes,bytes)", from, to, value, data, log).wait()
+        let arguments = [from, to, value, data, log] as [Any]
+        let web3 = Web3.default
+        return try address.send("forceTransfer(address,address,uint256,bytes,bytes)", arguments, web3: web3).wait()
     }
     
     /**
@@ -631,7 +649,9 @@ public class SecurityToken {
      ```
      */
     public func forceBurn(from: Address, value: BigUInt, data: Data, log: Data) throws -> TransactionSendingResult {
-        return try address.send("forceBurn(address,uint256,bytes,bytes)", from, value, data, log).wait()
+        let arguments = [from, value, data, log] as [Any]
+        let web3 = Web3.default
+        return try address.send("forceBurn(address,uint256,bytes,bytes)", arguments, web3: web3).wait()
     }
     
     /**
@@ -644,7 +664,7 @@ public class SecurityToken {
      ```
      */
     public func disableController() throws -> TransactionSendingResult {
-        return try address.send("disableController()").wait()
+        return try address.send("disableController()", web3: Web3.default).wait()
     }
     
     
@@ -657,7 +677,7 @@ public class SecurityToken {
      ```
      */
     public func version() throws -> [UInt8] {
-        return try address.call("getVersion()").wait().array { try $0.uint8() }
+        return try address.call("getVersion()", web3: Web3.default).wait().array { try $0.uint8() }
     }
     
     /**
@@ -669,7 +689,7 @@ public class SecurityToken {
      ```
      */
     public func investorsCount() throws -> BigUInt {
-        return try address.call("getInvestorCount()").wait().uint256()
+        return try address.call("getInvestorCount()", web3: Web3.default).wait().uint256()
     }
     
     /**
@@ -685,7 +705,9 @@ public class SecurityToken {
      ```
      */
     public func transfer(to: Address, value: BigUInt, data: Data) throws -> TransactionSendingResult {
-        return try address.send("transferWithData(address,uint256,bytes)", to, value, data).wait()
+        let arguments = [to, value, data] as [Any]
+        let web3 = Web3.default
+        return try address.send("transferWithData(address,uint256,bytes)", arguments, web3: web3).wait()
     }
     /**
      Overloaded version of the transferFrom function
@@ -701,7 +723,9 @@ public class SecurityToken {
      ```
      */
     public func transfer(from: Address, to: Address, value: BigUInt, data: Data) throws -> TransactionSendingResult {
-        return try address.send("transferFromWithData(address,address,uint256,bytes)", from, to, value, data).wait()
+        let arguments = [from, to, value, data] as [Any]
+        let web3 = Web3.default
+        return try address.send("transferFromWithData(address,address,uint256,bytes)", arguments, web3: web3).wait()
     }
     
     /**
@@ -714,6 +738,6 @@ public class SecurityToken {
      ```
      */
     public func granularity() throws -> BigUInt {
-        return try address.call("granularity()").wait().uint256()
+        return try address.call("granularity()", web3: Web3.default).wait().uint256()
     }
 }

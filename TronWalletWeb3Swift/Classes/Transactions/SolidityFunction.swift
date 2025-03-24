@@ -72,7 +72,7 @@ extension Address {
     ///   - options: Transaction options. default: nil
     ///   - onBlock: Future transaction block. default: "pending"
     /// - Returns: Promise for the assembled transaction
-    public func assemble(_ function: String, _ arguments: [Any], web3: Web3 = .default, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<EthereumTransaction> {
+    public func assemble(_ function: String, _ arguments: [Any], web3: Web3, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<EthereumTransaction> {
         let options = web3.options.merge(with: options)
         
         let function = try! SolidityFunction(function: function)
@@ -124,7 +124,7 @@ extension Address {
     ///   - options: Web3Options. default: nil
     ///   - onBlock: Gas estimation block. default: "pending"
     /// - Returns: Promise for sent transaction and its hash
-    public func send(_ function: String, _ arguments: Any..., password: String = "BANKEXFOUNDATION", web3: Web3 = .default, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<TransactionSendingResult> {
+    public func send(_ function: String, _ arguments: Any..., password: String = "BANKEXFOUNDATION", web3: Web3, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<TransactionSendingResult> {
         return send(function, arguments, password: password, web3: web3, options: options, onBlock: onBlock)
     }
     
@@ -139,7 +139,7 @@ extension Address {
     ///   - options: Web3Options. default: nil
     ///   - onBlock: Gas estimation block. default: "pending"
     /// - Returns: Promise for sent transaction and its hash
-    public func send(_ function: String, _ arguments: [Any], password: String = "BANKEXFOUNDATION", web3: Web3 = .default, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<TransactionSendingResult> {
+    public func send(_ function: String, _ arguments: [Any], password: String = "BANKEXFOUNDATION", web3: Web3, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<TransactionSendingResult> {
         let options = web3.options.merge(with: options)
         let queue = web3.requestDispatcher.queue
         return assemble(function, arguments, web3: web3, options: options, onBlock: onBlock).then(on: queue) { transaction throws -> Promise<TransactionSendingResult> in
@@ -160,7 +160,7 @@ extension Address {
     ///   - options: Web3Options. default: nil
     ///   - onBlock: Call block. default: "latest"
     /// - Returns: Promise for function result
-    public func call(_ function: String, _ arguments: Any..., web3: Web3 = .default, options: Web3Options? = nil, onBlock: String = "latest") -> Promise<SolidityDataReader> {
+    public func call(_ function: String, _ arguments: Any..., web3: Web3, options: Web3Options? = nil, onBlock: String = "latest") -> Promise<SolidityDataReader> {
         return call(function, arguments, web3: web3, options: options, onBlock: onBlock)
     }
     
@@ -173,7 +173,7 @@ extension Address {
     ///   - options: Web3Options. default: nil
     ///   - onBlock: Call block. default: "latest"
     /// - Returns: Promise for function result
-    public func call(_ function: String, _ arguments: [Any], web3: Web3 = .default, options: Web3Options? = nil, onBlock: String = "latest") -> Promise<SolidityDataReader> {
+    public func call(_ function: String, _ arguments: [Any], web3: Web3, options: Web3Options? = nil, onBlock: String = "latest") -> Promise<SolidityDataReader> {
         let options = web3.options.merge(with: options)
         let function = try! SolidityFunction(function: function)
         let data = function.encode(arguments as! [SolidityDataRepresentable])
@@ -200,7 +200,7 @@ extension Address {
     ///   - options: Web3Options. default: nil
     ///   - onBlock: Gas estimation block. default: "latest"
     /// - Returns: Promise for estimated gas
-    public func estimateGas(_ function: String, _ arguments: Any..., web3: Web3 = .default, options: Web3Options? = nil, onBlock: String = "latest") -> Promise<BigUInt> {
+    public func estimateGas(_ function: String, _ arguments: Any..., web3: Web3, options: Web3Options? = nil, onBlock: String = "latest") -> Promise<BigUInt> {
         return estimateGas(function, arguments, web3: web3, options: options, onBlock: onBlock)
     }
     
@@ -213,7 +213,7 @@ extension Address {
     ///   - options: Web3Options. default: nil
     ///   - onBlock: Gas estimation block. default: "latest"
     /// - Returns: Promise for estimated gas
-    public func estimateGas(_ function: String, _ arguments: [Any], web3: Web3 = .default, options: Web3Options? = nil, onBlock: String = "latest") -> Promise<BigUInt> {
+    public func estimateGas(_ function: String, _ arguments: [Any], web3: Web3, options: Web3Options? = nil, onBlock: String = "latest") -> Promise<BigUInt> {
         let options = web3.options.merge(with: options)
         let function = try! SolidityFunction(function: function)
         let data = function.encode(arguments as! [SolidityDataRepresentable])

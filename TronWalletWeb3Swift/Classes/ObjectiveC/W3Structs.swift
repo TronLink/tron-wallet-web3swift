@@ -85,7 +85,7 @@ extension Address.AddressType {
 	}
     
     @objc public func call(method: String, arguments: [Any]) throws -> W3SolidityDataReader {
-        return try swift.call(method, arguments.swift).wait().objc
+        return try swift.call(method, arguments.swift, web3: Web3.default).wait().objc
     }
     @objc public func send(method: String, arguments: [Any], password: String, options: W3Options?) throws -> W3TransactionSendingResult {
         return try swift.send(method, arguments.swift, password: password, web3: .default, options: options?.swift).wait().objc

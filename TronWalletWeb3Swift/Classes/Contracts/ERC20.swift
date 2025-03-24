@@ -36,27 +36,27 @@ public class ERC20 {
     }
     /// - Returns: Token name/description
     public func name() throws -> String {
-        return try address.call("name()", options: options).wait().string()
+        return try address.call("name()", web3: Web3.default, options: options).wait().string()
     }
     /// - Returns: Token symbol
     public func symbol() throws -> String {
-        return try address.call("symbol()", options: options).wait().string()
+        return try address.call("symbol()", web3: Web3.default, options: options).wait().string()
     }
     /// - Returns: Total token supply
     public func totalSupply() throws -> BigUInt {
-        return try address.call("totalSupply()", options: options).wait().uint256()
+        return try address.call("totalSupply()", web3: Web3.default, options: options).wait().uint256()
     }
     /// - Returns: Token decimals
     public func decimals() throws -> BigUInt {
-        return try address.call("decimals()", options: options).wait().uint256()
+        return try address.call("decimals()", web3: Web3.default, options: options).wait().uint256()
     }
     /// - Returns: User balance in wei
     public func balance(of user: Address) throws -> BigUInt {
-        return try address.call("balanceOf(address)", user, options: options).wait().uint256()
+        return try address.call("balanceOf(address)", user, web3: Web3.default, options: options).wait().uint256()
     }
     /// - Returns: user balance in human-readable format (automatically calculates with decimals)
     public func naturalBalance(of user: Address) throws -> String {
-        let balance = try address.call("balanceOf(address)", user, options: options).wait().uint256()
+        let balance = try address.call("balanceOf(address)", user, web3: Web3.default, options: options).wait().uint256()
         let decimals = try self.decimals()
         return balance.string(unitDecimals: Int(decimals))
     }
@@ -68,7 +68,9 @@ public class ERC20 {
      - Parameter spender: Spender address
     */
     public func allowance(from owner: Address, to spender: Address) throws -> BigUInt {
-        return try address.call("allowance(address,address)", owner, spender, options: options).wait().uint256()
+        let arguments = [owner, spender]
+        let web3 = Web3.default
+        return try address.call("allowance(address,address)", arguments, web3: web3, options: options).wait().uint256()
     }
     
     /**
@@ -79,7 +81,7 @@ public class ERC20 {
      - Parameter amount: Amount in wei to send. If you want to send 1 token (not 0.00000000001) use NaturalUnits(amount) instead
      */
     public func transfer(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("transfer(address,uint256)", user, amount, password: password, options: options).wait()
+        return try address.send("transfer(address,uint256)", user, amount, password: password, web3: Web3.default, options: options).wait()
     }
     /**
      Approves user to take \(amount) tokens from your account.
@@ -91,7 +93,7 @@ public class ERC20 {
      */
     public func approve(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
         
-        return try address.send("approve(address,uint256)", user, amount, password: password, options: options).wait()
+        return try address.send("approve(address,uint256)", user, amount, password: password, web3: Web3.default, options: options).wait()
     }
     
     /**
@@ -105,7 +107,9 @@ public class ERC20 {
      - Parameter amount: Amount in wei to send. If you want to send 1 token (not 0.00000000001) use NaturalUnits(amount) instead
      */
     public func transferFrom(owner: Address, to: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("transferFrom(address,address,uint256)", owner, to, amount, password: password, options: options).wait()
+        let arguments = [owner, to, amount] as [Any]
+        let web3 = Web3.default
+        return try address.send("transferFrom(address,address,uint256)", arguments, password: password, web3: web3, options: options).wait()
     }
     
     /**
@@ -163,15 +167,23 @@ public class ERC20 {
         
         /// - Returns: Gas price for transfer(address,uint256) transaction
         public func transfer(to user: Address, amount: BigUInt) throws -> BigUInt {
-            return try address.estimateGas("transfer(address,uint256)", user, amount, options: options).wait()
+            let arguments = [user, amount] as [Any]
+            let web3 = Web3.default
+            return try address.estimateGas("transfer(address,uint256)", arguments, web3: web3, options: options).wait()
         }
+
         /// - Returns: Gas price for approve(address,uint256) transaction
         public func approve(to user: Address, amount: BigUInt) throws -> BigUInt {
-            return try address.estimateGas("approve(address,uint256)", user, amount, options: options).wait()
+            let arguments = [user, amount] as [Any]
+            let web3 = Web3.default
+            return try address.estimateGas("approve(address,uint256)", arguments, web3: web3, options: options).wait()
         }
+
         /// - Returns: Gas price for transferFrom(address,address,uint256) function
         public func transferFrom(owner: Address, to: Address, amount: BigUInt) throws -> BigUInt {
-            return try address.estimateGas("transferFrom(address,address,uint256)", owner, to, amount, options: options).wait()
+            let arguments = [owner, to, amount] as [Any]
+            let web3 = Web3.default
+            return try address.estimateGas("transferFrom(address,address,uint256)", arguments, web3: web3, options: options).wait()
         }
         
         /// - Returns: Gas price for transfer(address,uint256) transaction
