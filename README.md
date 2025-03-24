@@ -1,6 +1,5 @@
 # TronWalletWeb3Swift
 
-[![CI Status](https://img.shields.io/travis/TronLink/TronWalletWeb3Swift.svg?style=flat)](https://travis-ci.org/TronLink/TronWalletWeb3Swift)
 [![Version](https://img.shields.io/cocoapods/v/TronWalletWeb3Swift.svg?style=flat)](https://cocoapods.org/pods/TronWalletWeb3Swift)
 [![License](https://img.shields.io/cocoapods/l/TronWalletWeb3Swift.svg?style=flat)](https://cocoapods.org/pods/TronWalletWeb3Swift)
 [![Platform](https://img.shields.io/cocoapods/p/TronWalletWeb3Swift.svg?style=flat)](https://cocoapods.org/pods/TronWalletWeb3Swift)
@@ -13,7 +12,7 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Requirements
 
-- iOS 10.0+
+- iOS 13.0+
 
 ## Installation
 

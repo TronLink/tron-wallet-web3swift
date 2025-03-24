@@ -94,23 +94,27 @@ public class ERC888 {
         
         /// - Returns: token name/description
         public func name() throws -> String {
-            return try address.call("name(uint256)", id, options: options).wait().string()
+            return try address.call("name(uint256)", id, web3: Web3.default, options: options).wait().string()
         }
         /// - Returns: token symbol
         public func symbol() throws -> String {
-            return try address.call("symbol(uint256)", id, options: options).wait().string()
+            return try address.call("symbol(uint256)", id, web3: Web3.default, options: options).wait().string()
         }
         /// - Returns: token decimals
         public func decimals() throws -> BigUInt {
-            return try address.call("decimals(uint256)", id, options: options).wait().uint256()
+            return try address.call("decimals(uint256)", id, web3: Web3.default, options: options).wait().uint256()
         }
         /// - Returns: user balance in wei
         public func balance(of user: Address) throws -> BigUInt {
-            return try address.call("balanceOf(uint256,address)", id, user, options: options).wait().uint256()
+            let arguments = [id, user] as [Any]
+            let web3 = Web3.default
+            return try address.call("balanceOf(uint256,address)", arguments, web3: web3, options: options).wait().uint256()
         }
         /// - Returns: user balance in human-readable format (automatically calculates with decimals)
         public func naturalBalance(of user: Address) throws -> String {
-            let balance = try address.call("balanceOf(uint256,address)", id, user, options: options).wait().uint256()
+            let arguments = [id, user] as [Any]
+            let web3 = Web3.default
+            let balance = try address.call("balanceOf(uint256,address)", arguments, web3: web3, options: options).wait().uint256()
             let decimals = try self.decimals()
             return balance.string(unitDecimals: Int(decimals))
         }
@@ -123,7 +127,9 @@ public class ERC888 {
          - Parameter amount: Amount in wei to send. If you want to send 1 token (not 0.00000000001) use NaturalUnits(amount) instead
          */
         public func transfer(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
-            return try address.send("transfer(uint256,address,uint256)", id, user, amount, password: password, options: options).wait()
+            let arguments = [id, user, amount] as [Any]
+            let web3 = Web3.default
+            return try address.send("transfer(uint256,address,uint256)", arguments, password: password, web3: web3, options: options).wait()
         }
         
         /**
@@ -152,7 +158,9 @@ public class ERC888 {
         
         /// - Returns: gas price for transfer(address,uint256) transaction
         public func transfer(to user: Address, amount: BigUInt) throws -> BigUInt {
-            return try address.estimateGas("transfer(uint256,address,uint256)", parent.id, user, amount, options: options).wait()
+            let arguments = [parent.id, user, amount] as [Any]
+            let web3 = Web3.default
+            return try address.estimateGas("transfer(uint256,address,uint256)", arguments, web3: web3, options: options).wait()
         }
         
         /// - Returns: gas price for transfer(address,uint256) transaction
