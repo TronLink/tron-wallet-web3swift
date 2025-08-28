@@ -1,7 +1,7 @@
 
 import BigInt
 import Foundation
-import secp256k1
+import tron_wallet_secp256k1
 
 extension Data {
     func checkSignatureSize() throws {
