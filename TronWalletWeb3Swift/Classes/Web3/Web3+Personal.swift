@@ -29,7 +29,7 @@ public class Web3Personal: Web3OptionsInheritable {
      - Important: This call is synchronous
 
      */
-    public func signPersonalMessage(message: Data, from: Address, password: String = "BANKEXFOUNDATION") throws -> Data {
+    public func signPersonalMessage(message: Data, from: Address, password: String) throws -> Data {
         return try signPersonalMessagePromise(message: message, from: from, password: password).wait()
     }
 
@@ -43,8 +43,8 @@ public class Web3Personal: Web3OptionsInheritable {
      - Important: This call is synchronous. Does nothing if private keys are stored locally.
 
      */
-    public func unlockAccount(account: Address, password _: String = "BANKEXFOUNDATION", seconds _: UInt64 = 300) throws -> Bool {
-        return try unlockAccountPromise(account: account).wait()
+    public func unlockAccount(account: Address, password: String, seconds: UInt64 = 300) throws -> Bool {
+        return try unlockAccountPromise(account: account, password: password, seconds: seconds).wait()
     }
 
     /**
@@ -71,7 +71,7 @@ public class Web3Personal: Web3OptionsInheritable {
         return try Web3Utils.hashECRecover(hash: hash, signature: signature)
     }
     
-    public func signPersonalMessagePromise(message: Data, from: Address, password: String = "BANKEXFOUNDATION") -> Promise<Data> {
+    public func signPersonalMessagePromise(message: Data, from: Address, password: String) -> Promise<Data> {
         let queue = web3.requestDispatcher.queue
         do {
             if web3.provider.attachedKeystoreManager.isEmpty {
@@ -103,12 +103,12 @@ public class Web3Personal: Web3OptionsInheritable {
     }
     
     
-    func unlockAccountPromise(account: Address, password: String = "BANKEXFOUNDATION", seconds: UInt64 = 300) -> Promise<Bool> {
+    func unlockAccountPromise(account: Address, password: String, seconds: UInt64 = 300) -> Promise<Bool> {
         let addr = account.address
         return unlockAccountPromise(account: addr, password: password, seconds: seconds)
     }
     
-    func unlockAccountPromise(account: String, password: String = "BANKEXFOUNDATION", seconds: UInt64 = 300) -> Promise<Bool> {
+    func unlockAccountPromise(account: String, password: String, seconds: UInt64 = 300) -> Promise<Bool> {
         let queue = web3.requestDispatcher.queue
         do {
             if web3.provider.attachedKeystoreManager.isEmpty {

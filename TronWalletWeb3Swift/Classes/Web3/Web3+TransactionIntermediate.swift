@@ -142,7 +142,7 @@ public class TransactionIntermediate {
      - Important: This call is synchronous
      */
     @discardableResult
-    public func send(password: String = "BANKEXFOUNDATION", options: Web3Options? = nil, onBlock: String = "pending") throws -> TransactionSendingResult {
+    public func send(password: String, options: Web3Options? = nil, onBlock: String = "pending") throws -> TransactionSendingResult {
         return try sendPromise(password: password, options: options, onBlock: onBlock).wait()
     }
     
@@ -258,7 +258,7 @@ public class TransactionIntermediate {
      
      - Returns: Promise for TransactionResult which contains transaction hash and other info
      */
-    public func sendPromise(password: String = "BANKEXFOUNDATION", options: Web3Options? = nil, onBlock: String = "pending") -> Promise<TransactionSendingResult> {
+    public func sendPromise(password: String, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<TransactionSendingResult> {
         let queue = web3.requestDispatcher.queue
         return assemblePromise(options: options, onBlock: onBlock).then(on: queue) { transaction throws -> Promise<TransactionSendingResult> in
             let mergedOptions = self.options.merge(with: options)

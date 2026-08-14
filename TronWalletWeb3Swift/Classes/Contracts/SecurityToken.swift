@@ -16,13 +16,13 @@ import BigInt
  event Burnt(address indexed _burner, uint256 _value);
  ```
  */
-public class SecurityToken {
+public class SecurityToken: PasswordProtected {
     /// Token address
     public let address: Address
     /// Transaction Options
     public var options: Web3Options = .default
     /// Password to unlock private key for sender address
-    public var password: String = "BANKEXFOUNDATION"
+    public var password: String?
     
     /// Represents Address as SecurityToken token (with standard password and options)
     /// - Parameter address: Token address
@@ -86,7 +86,7 @@ public class SecurityToken {
      ```
      */
     public func transfer(to: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("transfer(address,uint256)", to, amount, web3: Web3.default).wait()
+        return try address.send("transfer(address,uint256)", to, amount, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -105,7 +105,7 @@ public class SecurityToken {
     public func transfer(from: Address, to: Address, amount: BigUInt) throws -> TransactionSendingResult {
         let arguments = [from, to, amount] as [Any]
         let web3 = Web3.default
-        return try address.send("transferFrom(address,address,uint256)", arguments, web3: web3).wait()
+        return try address.send("transferFrom(address,address,uint256)", arguments, password: try requirePassword(), web3: web3).wait()
     }
     
     /**
@@ -122,17 +122,17 @@ public class SecurityToken {
      ```
      */
     public func approve(spender: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("approve(address,uint256)", spender, amount, web3: Web3.default).wait()
+        return try address.send("approve(address,uint256)", spender, amount, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /// Decrease approved balance that spender can take from your address
     public func decreaseApproval(spender: Address, subtractedValue: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("decreaseApproval(address,uint256)", spender, subtractedValue, web3: Web3.default).wait()
+        return try address.send("decreaseApproval(address,uint256)", spender, subtractedValue, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /// Increase approved balance that spender can take from your address
     public func increaseApproval(spender: Address, addedValue: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("increaseApproval(address,uint256)", spender, addedValue, web3: Web3.default).wait()
+        return try address.send("increaseApproval(address,uint256)", spender, addedValue, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -145,7 +145,7 @@ public class SecurityToken {
     public func verifyTransfer(from: Address, to: Address, value: BigUInt) throws -> TransactionSendingResult {
         let arguments = [from, to, value] as [Any]
         let web3 = Web3.default
-        return try address.send("verifyTransfer(address,address,value)", arguments, web3: web3).wait()
+        return try address.send("verifyTransfer(address,address,value)", arguments, password: try requirePassword(), web3: web3).wait()
     }
     
     /**
@@ -160,7 +160,7 @@ public class SecurityToken {
      ```
      */
     public func mint(investor: Address, value: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("mint(address,uint256)", investor, value, web3: Web3.default).wait()
+        return try address.send("mint(address,uint256)", investor, value, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -178,7 +178,7 @@ public class SecurityToken {
     public func mint(investor: Address, value: BigUInt, data: Data) throws -> TransactionSendingResult {
         let arguments = [investor, value, data] as [Any]
         let web3 = Web3.default
-        return try address.send("mintWithData(address,uint256,bytes)", arguments, web3: web3).wait()
+        return try address.send("mintWithData(address,uint256,bytes)", arguments, password: try requirePassword(), web3: web3).wait()
     }
     
     
@@ -196,7 +196,7 @@ public class SecurityToken {
     public func burn(from: Address, value: BigUInt, data: Data) throws -> TransactionSendingResult {
         let arguments = [from, value, data] as [Any]
         let web3 = Web3.default
-        return try address.send("burnFromWithData(address,uint256,bytes)", arguments, web3: web3).wait()
+        return try address.send("burnFromWithData(address,uint256,bytes)", arguments, password: try requirePassword(), web3: web3).wait()
     }
     
     
@@ -211,7 +211,7 @@ public class SecurityToken {
      ```
      */
     public func burn(value: BigUInt, data: Data) throws -> TransactionSendingResult {
-        return try address.send("burnWithData(uint256 _value, bytes _data)", value, data, web3: Web3.default).wait()
+        return try address.send("burnWithData(uint256 _value, bytes _data)", value, data, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -337,7 +337,7 @@ public class SecurityToken {
      ```
      */
     public func createCheckpoint() throws -> TransactionSendingResult {
-        return try address.send("createCheckpoint()", web3: Web3.default).wait()
+        return try address.send("createCheckpoint()", password: try requirePassword(), web3: Web3.default).wait()
     }
     
     
@@ -427,7 +427,7 @@ public class SecurityToken {
      ```
      */
     public func withdrawERC20(tokenContract: Address, value: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("withdrawERC20(address,uint256)", tokenContract, value, web3: Web3.default).wait()
+        return try address.send("withdrawERC20(address,uint256)", tokenContract, value, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -441,7 +441,7 @@ public class SecurityToken {
      ```
      */
     public func changeModuleBudget(module: Address, budget: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("changeModuleBudget(address,uint256)", module, budget, web3: Web3.default).wait()
+        return try address.send("changeModuleBudget(address,uint256)", module, budget, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -454,7 +454,7 @@ public class SecurityToken {
      ```
      */
     public func updateTokenDetails(newTokenDetails: String) throws -> TransactionSendingResult {
-        return try address.send("updateTokenDetails(string)", newTokenDetails, web3: Web3.default).wait()
+        return try address.send("updateTokenDetails(string)", newTokenDetails, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -467,7 +467,7 @@ public class SecurityToken {
      ```
      */
     public func changeGranularity(granularity: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("changeGranularity(uint256)", granularity, web3: Web3.default).wait()
+        return try address.send("changeGranularity(uint256)", granularity, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -482,7 +482,7 @@ public class SecurityToken {
      ```
      */
     public func pruneInvestors(start: BigUInt, iters: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("pruneInvestors(uint256,uint256)", start, iters, web3: Web3.default).wait()
+        return try address.send("pruneInvestors(uint256,uint256)", start, iters, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -494,7 +494,7 @@ public class SecurityToken {
      ```
      */
     public func freezeTransfers() throws -> TransactionSendingResult {
-        return try address.send("freezeTransfers()", web3: Web3.default).wait()
+        return try address.send("freezeTransfers()", password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -506,7 +506,7 @@ public class SecurityToken {
      ```
      */
     public func unfreezeTransfers() throws -> TransactionSendingResult {
-        return try address.send("unfreezeTransfers()", web3: Web3.default).wait()
+        return try address.send("unfreezeTransfers()", password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -518,7 +518,7 @@ public class SecurityToken {
      ```
      */
     public func freezeMinting() throws -> TransactionSendingResult {
-        return try address.send("freezeMinting()", web3: Web3.default).wait()
+        return try address.send("freezeMinting()", password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -534,7 +534,7 @@ public class SecurityToken {
      ```
      */
     public func mintMulti(investors: [Address], values: [BigUInt]) throws -> TransactionSendingResult {
-        return try address.send("mintMulti(address[],uint256[])", investors, values, web3: Web3.default).wait()
+        return try address.send("mintMulti(address[],uint256[])", investors, values, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -562,7 +562,7 @@ public class SecurityToken {
     public func addModule(moduleFactory: Address, data: Data, maxCost: BigUInt, budget: BigUInt) throws -> TransactionSendingResult {
         let arguments = [moduleFactory, data, maxCost, budget] as [Any]
         let web3 = Web3.default
-        return try address.send("addModule(address,bytes,uint256,uint256)", arguments, web3: web3).wait()
+        return try address.send("addModule(address,bytes,uint256,uint256)", arguments, password: try requirePassword(), web3: web3).wait()
     }
     
     /**
@@ -575,7 +575,7 @@ public class SecurityToken {
      ```
      */
     public func archive(module: Address) throws -> TransactionSendingResult {
-        return try address.send("archiveModule(address)", module, web3: Web3.default).wait()
+        return try address.send("archiveModule(address)", module, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -588,7 +588,7 @@ public class SecurityToken {
      ```
      */
     public func unarchive(module: Address) throws -> TransactionSendingResult {
-        return try address.send("unarchiveModule(address)", module, web3: Web3.default).wait()
+        return try address.send("unarchiveModule(address)", module, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -601,7 +601,7 @@ public class SecurityToken {
      ```
      */
     public func remove(module: Address) throws -> TransactionSendingResult {
-        return try address.send("removeModule(address)", module, web3: Web3.default).wait()
+        return try address.send("removeModule(address)", module, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -614,7 +614,7 @@ public class SecurityToken {
      ```
      */
     public func set(controller: Address) throws -> TransactionSendingResult {
-        return try address.send("setController(address)", module, web3: Web3.default).wait()
+        return try address.send("setController(address)", module, password: try requirePassword(), web3: Web3.default).wait()
     }
     
     /**
@@ -633,7 +633,7 @@ public class SecurityToken {
     public func forceTransfer(from: Address, to: Address, value: BigUInt, data: Data, log: Data) throws -> TransactionSendingResult {
         let arguments = [from, to, value, data, log] as [Any]
         let web3 = Web3.default
-        return try address.send("forceTransfer(address,address,uint256,bytes,bytes)", arguments, web3: web3).wait()
+        return try address.send("forceTransfer(address,address,uint256,bytes,bytes)", arguments, password: try requirePassword(), web3: web3).wait()
     }
     
     /**
@@ -651,7 +651,7 @@ public class SecurityToken {
     public func forceBurn(from: Address, value: BigUInt, data: Data, log: Data) throws -> TransactionSendingResult {
         let arguments = [from, value, data, log] as [Any]
         let web3 = Web3.default
-        return try address.send("forceBurn(address,uint256,bytes,bytes)", arguments, web3: web3).wait()
+        return try address.send("forceBurn(address,uint256,bytes,bytes)", arguments, password: try requirePassword(), web3: web3).wait()
     }
     
     /**
@@ -664,7 +664,7 @@ public class SecurityToken {
      ```
      */
     public func disableController() throws -> TransactionSendingResult {
-        return try address.send("disableController()", web3: Web3.default).wait()
+        return try address.send("disableController()", password: try requirePassword(), web3: Web3.default).wait()
     }
     
     
@@ -707,7 +707,7 @@ public class SecurityToken {
     public func transfer(to: Address, value: BigUInt, data: Data) throws -> TransactionSendingResult {
         let arguments = [to, value, data] as [Any]
         let web3 = Web3.default
-        return try address.send("transferWithData(address,uint256,bytes)", arguments, web3: web3).wait()
+        return try address.send("transferWithData(address,uint256,bytes)", arguments, password: try requirePassword(), web3: web3).wait()
     }
     /**
      Overloaded version of the transferFrom function
@@ -725,7 +725,7 @@ public class SecurityToken {
     public func transfer(from: Address, to: Address, value: BigUInt, data: Data) throws -> TransactionSendingResult {
         let arguments = [from, to, value, data] as [Any]
         let web3 = Web3.default
-        return try address.send("transferFromWithData(address,address,uint256,bytes)", arguments, web3: web3).wait()
+        return try address.send("transferFromWithData(address,address,uint256,bytes)", arguments, password: try requirePassword(), web3: web3).wait()
     }
     
     /**

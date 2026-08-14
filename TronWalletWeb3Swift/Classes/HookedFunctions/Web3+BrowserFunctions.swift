@@ -44,7 +44,7 @@ public class Web3BrowserFunctions: Web3OptionsInheritable {
      - Parameter account: Account that signs message
      - Parameter password: Password to decrypt private key
      */
-    public func personalSign(_ personalMessage: String, account: String, password: String = "BANKEXFOUNDATION") -> String? {
+    public func personalSign(_ personalMessage: String, account: String, password: String) -> String? {
         return sign(personalMessage, account: account, password: password)
     }
 
@@ -54,7 +54,7 @@ public class Web3BrowserFunctions: Web3OptionsInheritable {
      - Parameter account: Account that signs message
      - Parameter password: Password to decrypt private key
      */
-    public func sign(_ personalMessage: String, account: String, password: String = "BANKEXFOUNDATION") -> String? {
+    public func sign(_ personalMessage: String, account: String, password: String) -> String? {
         guard let data = Data.fromHex(personalMessage) else { return nil }
         return sign(data, account: account, password: password)
     }
@@ -65,7 +65,7 @@ public class Web3BrowserFunctions: Web3OptionsInheritable {
      - Parameter account: Account that signs message
      - Parameter password: Password to decrypt private key
      */
-    public func sign(_ personalMessage: Data, account: String, password: String = "BANKEXFOUNDATION") -> String? {
+    public func sign(_ personalMessage: Data, account: String, password: String) -> String? {
         let keystoreManager = self.web3.provider.attachedKeystoreManager
         guard let signature = try? Web3Signer.signPersonalMessage(personalMessage, keystore: keystoreManager, account: Address(account), password: password) else { return nil }
         return signature.hex.withHex
@@ -110,7 +110,7 @@ public class Web3BrowserFunctions: Web3OptionsInheritable {
      - Parameter password: Password to decrypt sender's private key
      - Returns: Transaction hash
      */
-    public func sendTransaction(_ json: [String: Any], password: String = "BANKEXFOUNDATION") throws -> String {
+    public func sendTransaction(_ json: [String: Any], password: String) throws -> String {
         let transaction = try EthereumTransaction(json)
         let options = try Web3Options(json)
         return try sendTransaction(transaction, options: options, password: password)
@@ -122,7 +122,7 @@ public class Web3BrowserFunctions: Web3OptionsInheritable {
      - Parameter password: Password to decrypt sender's private key
      - Returns: Transaction hash
      */
-    public func sendTransaction(_ transaction: EthereumTransaction, options: Web3Options, password: String = "BANKEXFOUNDATION") throws -> String {
+    public func sendTransaction(_ transaction: EthereumTransaction, options: Web3Options, password: String) throws -> String {
         return try web3.eth.sendTransaction(transaction, options: options, password: password).hash
     }
     
@@ -208,7 +208,7 @@ public class Web3BrowserFunctions: Web3OptionsInheritable {
      - Parameter personalMessage: Transaction to sign
      - Parameter password: Password to decrypt private key
      */
-    public func signTransaction(_ json: [String: Any], password: String = "BANKEXFOUNDATION") throws -> String {
+    public func signTransaction(_ json: [String: Any], password: String) throws -> String {
         let transaction = try EthereumTransaction(json)
         let options = try Web3Options(json)
         return try signTransaction(transaction, options: options, password: password)
@@ -220,7 +220,7 @@ public class Web3BrowserFunctions: Web3OptionsInheritable {
      - Parameter personalMessage: Transaction to sign
      - Parameter password: Password to decrypt private key
      */
-    public func signTransaction(_ trans: EthereumTransaction, options: Web3Options, password: String = "BANKEXFOUNDATION") throws -> String {
+    public func signTransaction(_ trans: EthereumTransaction, options: Web3Options, password: String) throws -> String {
         var transaction = trans
         guard let from = options.from else { throw TransactionError.optionsFromNotFound }
         let keystoreManager = self.web3.provider.attachedKeystoreManager

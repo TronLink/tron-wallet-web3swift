@@ -42,7 +42,7 @@ public class KeystoreManager: AbstractKeystore {
     ///   - account: Account for your private key
     /// - Returns: Private key data
     /// - Throws: If cannot find an account or decrypt private key
-    public func UNSAFE_getPrivateKeyData(password: String = "BANKEXFOUNDATION", account: Address) throws -> Data {
+    public func UNSAFE_getPrivateKeyData(password: String, account: Address) throws -> Data {
         guard let keystore = self.walletForAddress(account) else { throw AbstractKeystoreError.invalidAccountError }
         return try keystore.UNSAFE_getPrivateKeyData(password: password, account: account)
     }

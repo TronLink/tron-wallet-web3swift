@@ -14,6 +14,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AB82CD37BE231A815F342EA04661AD70"
+               BuildableName = "Pods_TronWalletWeb3Swift_Example.framework"
+               BlueprintName = "Pods-TronWalletWeb3Swift_Example"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "607FACCF1AFB9204008FA782"
                BuildableName = "TronWalletWeb3Swift_Example.app"
                BlueprintName = "TronWalletWeb3Swift_Example"

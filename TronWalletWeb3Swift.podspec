@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'TronWalletWeb3Swift'
-  s.version          = '1.1.1'
+  s.version          = '1.1.2'
   s.summary          = 'TronWalletWeb3Swift is an iOS toolbelt for interaction with the Tron network.'
 
   s.homepage         = 'https://github.com/TronLink/TronWalletWeb3Swift'

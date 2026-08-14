@@ -140,18 +140,19 @@ struct AES128 {
                 try CCCryptorCreateWithMode(operation, mode.cc, CCAlgorithm(kCCAlgorithmAES128), padding.cc, ivBytes, keyBytes, key.count, nil, 0, 0, CCModeOptions(kCCModeOptionCTR_BE), &cryptor).check()
             }
         }
+        defer { CCCryptorRelease(cryptor) }
         try input.pointer { encryptedBytes in
             try CCCryptorUpdate(cryptor, encryptedBytes, input.count, &outBytes, outBytes.count, &outLength).check()
         }
         length += outLength
-        let oldcount = outBytes.count
-        outBytes.withUnsafeMutableBytes { ptr in
-            _ = memset(ptr.baseAddress! + outLength, 0, length)
+        // The final block must be appended after what Update already wrote,
+        // otherwise it overwrites the first block of the output.
+        try outBytes.withUnsafeMutableBytes { ptr in
+            try CCCryptorFinal(cryptor, ptr.baseAddress! + length, ptr.count - length, &outLength).check()
         }
-        try CCCryptorFinal(cryptor, &outBytes, oldcount, &outLength).check()
         length += outLength
         
-        return Data(bytes: UnsafePointer<UInt8>(outBytes), count: length)
+        return Data(outBytes[0 ..< length])
     }
     
     static func createKey(password: Data, salt: Data) throws -> Data {
@@ -175,22 +176,5 @@ struct AES128 {
             throw Error.keyGeneration(status: Int(status))
         }
         return Data(bytes: UnsafePointer<UInt8>(derivedBytes), count: length)
-    }
-    
-    static func randomIv() -> Data {
-        return randomData(length: kCCBlockSizeAES128)
-    }
-    
-    static func randomSalt() -> Data {
-        return randomData(length: 8)
-    }
-    
-    static func randomData(length: Int) -> Data {
-        var data = Data(count: length)
-        let status = data.withUnsafeMutableBytes { mutableBytes in
-            SecRandomCopyBytes(kSecRandomDefault, length, mutableBytes)
-        }
-        assert(status == Int32(0))
-        return data
     }
 }

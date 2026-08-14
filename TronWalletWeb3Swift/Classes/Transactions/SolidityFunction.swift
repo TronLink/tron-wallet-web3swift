@@ -124,7 +124,7 @@ extension Address {
     ///   - options: Web3Options. default: nil
     ///   - onBlock: Gas estimation block. default: "pending"
     /// - Returns: Promise for sent transaction and its hash
-    public func send(_ function: String, _ arguments: Any..., password: String = "BANKEXFOUNDATION", web3: Web3, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<TransactionSendingResult> {
+    public func send(_ function: String, _ arguments: Any..., password: String, web3: Web3, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<TransactionSendingResult> {
         return send(function, arguments, password: password, web3: web3, options: options, onBlock: onBlock)
     }
     
@@ -139,7 +139,7 @@ extension Address {
     ///   - options: Web3Options. default: nil
     ///   - onBlock: Gas estimation block. default: "pending"
     /// - Returns: Promise for sent transaction and its hash
-    public func send(_ function: String, _ arguments: [Any], password: String = "BANKEXFOUNDATION", web3: Web3, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<TransactionSendingResult> {
+    public func send(_ function: String, _ arguments: [Any], password: String, web3: Web3, options: Web3Options? = nil, onBlock: String = "pending") -> Promise<TransactionSendingResult> {
         let options = web3.options.merge(with: options)
         let queue = web3.requestDispatcher.queue
         return assemble(function, arguments, web3: web3, options: options, onBlock: onBlock).then(on: queue) { transaction throws -> Promise<TransactionSendingResult> in

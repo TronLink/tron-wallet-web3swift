@@ -27,12 +27,12 @@ import Foundation
     /// Web3WalletError.attachadKeystoreNotFound
     /// AbstractKeystoreError
     /// Error
-    @objc public func sign(transaction: W3EthereumTransaction, account: W3Address, password: String = "BANKEXFOUNDATION") throws {
+    @objc public func sign(transaction: W3EthereumTransaction, account: W3Address, password: String) throws {
         try swift.signTX(transaction: &transaction.swift, account: account.swift, password: password)
     }
     
     /// - Throws: SECP256K1Error
-    @objc public func sign(personalMessageData: Data, account: W3Address, password: String = "BANKEXFOUNDATION") throws -> Data {
+    @objc public func sign(personalMessageData: Data, account: W3Address, password: String) throws -> Data {
         return try swift.signPersonalMessage(personalMessageData, account: account.swift, password: password)
     }
 }

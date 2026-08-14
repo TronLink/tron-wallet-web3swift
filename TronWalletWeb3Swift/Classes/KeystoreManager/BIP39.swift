@@ -86,9 +86,10 @@ public enum EntropySize: Int {
  To get private key from mnemonics:
  ```
  let mnemonics = Mnemonics()
- let keystore = try BIP32Keystore(mnemonics: mnemonics)
+ let password = <#Wallet password#>
+ let keystore = try BIP32Keystore(mnemonics: mnemonics, password: password)
  let address = keystore.addresses[0]
- let privateKey = try keystore.UNSAFE_getPrivateKeyData(password: "", account: address)
+ let privateKey = try keystore.UNSAFE_getPrivateKeyData(password: password, account: address)
  let publicKey = try Web3Utils.privateToPublic(privateKey, compressed: true)
  ```
  In the most cases you don't need to manage your public and private keys. web3swift doing this for you.
@@ -107,7 +108,7 @@ public class Mnemonics {
     public enum EntropyError: Swift.Error {
         /// Not enough words. Your mnemonics should have at least 12 words
         case notEnoughtWords
-        /// Invalid number of words. It is necessary that the number of words be a multiple of four
+        /// Invalid number of words. BIP39 supports 12, 15, 18, 21, or 24 words
         case invalidNumberOfWords
         /// Cannot find word \"\(string)\" in our dictionary
         case wordNotFound(String)
@@ -121,7 +122,7 @@ public class Mnemonics {
             case .notEnoughtWords:
                 return "Not enough words. Your mnemonics should have at least 12 words"
             case .invalidNumberOfWords:
-                return "Invalid number of words. It is necessary that the number of words be a multiple of four"
+                return "Invalid number of words. BIP39 supports 12, 15, 18, 21, or 24 words"
             case let .wordNotFound(string):
                 return "Cannot find word \"\(string)\" in our dictionary"
             case .invalidOrderOfWords:
@@ -169,7 +170,7 @@ public class Mnemonics {
      
      Requirements:
      1. Minimum 12 words
-     2. Words.count % 4 == 0
+     2. Words.count must be 12, 15, 18, 21, or 24
      3. Every word must be in [our dictionary](https://github.com/bitcoin/bips/blob/master/bip-0039/bip-0039-wordlists.md)
      4. Words must be in valid order
      5. Checksum bits should match (should never throw on that)
@@ -177,9 +178,10 @@ public class Mnemonics {
      */
     public init(_ string: String, language: BIP39Language = .english) throws {
         // checking entropy
-        let wordList = string.components(separatedBy: " ")
+        let normalizedString = string.decomposedStringWithCompatibilityMapping
+        let wordList = normalizedString.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
         guard wordList.count >= 12 else { throw EntropyError.notEnoughtWords }
-        guard wordList.count % 4 == 0 else { throw EntropyError.invalidNumberOfWords }
+        guard [12, 15, 18, 21, 24].contains(wordList.count) else { throw EntropyError.invalidNumberOfWords }
 
         var bitString = ""
         for word in wordList {
@@ -196,7 +198,7 @@ public class Mnemonics {
         let entropy = entropyBits.interpretAsBinaryData()
         let checksum = String(entropy.sha256().bitsInRange(0, checksumBits.count), radix: 2).leftPadding(toLength: checksumBits.count, withPad: "0")
         guard checksum == checksumBits else { throw EntropyError.checksumFailed(checksum, checksumBits) }
-        self.string = string
+        self.string = wordList.joined(separator: language.separator)
         self.language = language
         self.entropy = entropy
     }
@@ -266,4 +268,3 @@ extension Mnemonics: CustomStringConvertible {
         return string
     }
 }
-

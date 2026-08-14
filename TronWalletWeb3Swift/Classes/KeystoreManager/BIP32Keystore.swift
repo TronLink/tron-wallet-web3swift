@@ -82,7 +82,7 @@ public class BIP32Keystore: AbstractKeystore {
     /// - Parameter password: Password used to encrypt your private key
     /// - Parameter prefixPath: HDNode path. default: "m/44'/60'/0'/0" (Metamask prefix)
     /// Shouldn't throw if you generate your mnemonics
-    public convenience init(mnemonics: Mnemonics, password: String = "BANKEXFOUNDATION", prefixPath: String = HDNode.defaultPathMetamaskPrefix) throws {
+    public convenience init(mnemonics: Mnemonics, password: String, prefixPath: String = HDNode.defaultPathMetamaskPrefix) throws {
         var seed = mnemonics.seed()
         defer { Data.zero(&seed) }
         try self.init(seed: seed, password: password, prefixPath: prefixPath)
@@ -92,7 +92,7 @@ public class BIP32Keystore: AbstractKeystore {
     /// - Parameter seed: Seed that need to generate your account
     /// - Parameter password: Password used to encrypt your private key
     /// - Parameter prefixPath: HDNode path. default: "m/44'/60'/0'/0" (Metamask prefix)
-    public init(seed: Data, password: String = "BANKEXFOUNDATION", prefixPath: String = HDNode.defaultPathMetamaskPrefix) throws {
+    public init(seed: Data, password: String, prefixPath: String = HDNode.defaultPathMetamaskPrefix) throws {
         let prefixNode = try HDNode(seed: seed).derive(path: prefixPath, derivePrivateKey: true)
         rootPrefix = prefixPath
         try createNewAccount(parentNode: prefixNode, password: password)
@@ -106,7 +106,7 @@ public class BIP32Keystore: AbstractKeystore {
      Also automatically searches in current paths.
      So it wouldn't skip any index or create an existing account.
     */
-    public func createNewChildAccount(password: String = "BANKEXFOUNDATION") throws {
+    public func createNewChildAccount(password: String) throws {
         guard let decryptedRootNode = try? self.getPrefixNodeData(password), decryptedRootNode != nil else { throw AbstractKeystoreError.encryptionError("Failed to decrypt a keystore") }
         guard let rootNode = HDNode(decryptedRootNode!) else { throw AbstractKeystoreError.encryptionError("Failed to deserialize a root node") }
         let prefixPath = rootPrefix
@@ -115,7 +115,7 @@ public class BIP32Keystore: AbstractKeystore {
     }
     
     /// Creates new account using custom HDNode
-    public func createNewAccount(parentNode: HDNode, password: String = "BANKEXFOUNDATION", aesMode: String = "aes-128-cbc") throws {
+    public func createNewAccount(parentNode: HDNode, password: String, aesMode: String = "aes-128-cbc") throws {
         var newIndex = UInt32(0)
         for (p, _) in paths {
             guard let idx = UInt32(p.components(separatedBy: "/").last!) else { continue }
@@ -138,7 +138,7 @@ public class BIP32Keystore: AbstractKeystore {
     }
 
     /// Creates sub account using custom HDNode
-    public func createNewCustomChildAccount(password: String = "BANKEXFOUNDATION", path: String) throws {
+    public func createNewCustomChildAccount(password: String, path: String) throws {
         guard let decryptedRootNode = try? self.getPrefixNodeData(password), decryptedRootNode != nil else { throw AbstractKeystoreError.encryptionError("Failed to decrypt a keystore") }
         guard let rootNode = HDNode(decryptedRootNode!) else { throw AbstractKeystoreError.encryptionError("Failed to deserialize a root node") }
         let prefixPath = rootPrefix
@@ -284,7 +284,7 @@ public class BIP32Keystore: AbstractKeystore {
     }
 
     /// Returns your root node string
-    public func serializeRootNodeToString(password: String = "BANKEXFOUNDATION") throws -> String {
+    public func serializeRootNodeToString(password: String) throws -> String {
         guard let decryptedRootNode = try? self.getPrefixNodeData(password), decryptedRootNode != nil else { throw AbstractKeystoreError.encryptionError("Failed to decrypt a keystore") }
         guard let rootNode = HDNode(decryptedRootNode!) else { throw AbstractKeystoreError.encryptionError("Failed to deserialize a root node") }
         guard let string = rootNode.serializeToString(serializePublic: false) else { throw AbstractKeystoreError.encryptionError("Failed to deserialize a root node") }

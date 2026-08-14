@@ -7,13 +7,13 @@ import PromiseKit
  Native implementation of ERC20 token
  - Important: NOT main thread friendly
  */
-public class ERC20 {
+public class ERC20: PasswordProtected {
     /// Token address
     public let address: Address
     /// Transaction Options
     public var options: Web3Options = .default
     /// Password to unlock private key for sender address
-    public var password: String = "BANKEXFOUNDATION"
+    public var password: String?
     /**
     * Gas price functions if you want to see that
     * Automatically calls if options.gasPrice == nil */
@@ -81,7 +81,7 @@ public class ERC20 {
      - Parameter amount: Amount in wei to send. If you want to send 1 token (not 0.00000000001) use NaturalUnits(amount) instead
      */
     public func transfer(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
-        return try address.send("transfer(address,uint256)", user, amount, password: password, web3: Web3.default, options: options).wait()
+        return try address.send("transfer(address,uint256)", user, amount, password: try requirePassword(), web3: Web3.default, options: options).wait()
     }
     /**
      Approves user to take \(amount) tokens from your account.
@@ -93,7 +93,7 @@ public class ERC20 {
      */
     public func approve(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
         
-        return try address.send("approve(address,uint256)", user, amount, password: password, web3: Web3.default, options: options).wait()
+        return try address.send("approve(address,uint256)", user, amount, password: try requirePassword(), web3: Web3.default, options: options).wait()
     }
     
     /**
@@ -109,7 +109,7 @@ public class ERC20 {
     public func transferFrom(owner: Address, to: Address, amount: BigUInt) throws -> TransactionSendingResult {
         let arguments = [owner, to, amount] as [Any]
         let web3 = Web3.default
-        return try address.send("transferFrom(address,address,uint256)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("transferFrom(address,address,uint256)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
     
     /**

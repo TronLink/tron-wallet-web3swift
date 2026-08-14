@@ -270,23 +270,23 @@ extension BIP32Keystore {
 		self.swift = swift
 	}
 	
-	@objc public init(mnemonics: W3Mnemonics, password: String = "BANKEXFOUNDATION", prefixPath: String = HDNode.defaultPathMetamaskPrefix) throws {
+	@objc public init(mnemonics: W3Mnemonics, password: String, prefixPath: String = HDNode.defaultPathMetamaskPrefix) throws {
 		swift = try BIP32Keystore(mnemonics: mnemonics.swift, password: password, prefixPath: prefixPath)
 	}
 	
-	@objc public init(seed: Data, password: String = "BANKEXFOUNDATION", prefixPath: String = HDNode.defaultPathMetamaskPrefix) throws {
+	@objc public init(seed: Data, password: String, prefixPath: String = HDNode.defaultPathMetamaskPrefix) throws {
 		swift = try BIP32Keystore(seed: seed, password: password, prefixPath: prefixPath)
 	}
 	
-	@objc public func createNewChildAccount(password: String = "BANKEXFOUNDATION") throws {
-		try swift.createNewChildAccount()
+	@objc public func createNewChildAccount(password: String) throws {
+		try swift.createNewChildAccount(password: password)
 	}
 	
-	@objc public func createNewAccount(parentNode: W3HDNode, password: String = "BANKEXFOUNDATION", aesMode: String = "aes-128-cbc") throws {
+	@objc public func createNewAccount(parentNode: W3HDNode, password: String, aesMode: String = "aes-128-cbc") throws {
 		try swift.createNewAccount(parentNode: parentNode.swift, password: password, aesMode: aesMode)
 	}
 	
-	@objc public func createNewCustomChildAccount(password: String = "BANKEXFOUNDATION", path: String) throws {
+	@objc public func createNewCustomChildAccount(password: String, path: String) throws {
 		try swift.createNewCustomChildAccount(password: password, path: path)
 	}
 	
@@ -299,7 +299,7 @@ extension BIP32Keystore {
 		return data
 	}
 	
-	@objc public func serializeRootNodeToString(password: String = "BANKEXFOUNDATION") throws -> String {
+	@objc public func serializeRootNodeToString(password: String) throws -> String {
 		return try swift.serializeRootNodeToString(password: password)
 	}
 }
@@ -367,12 +367,12 @@ extension EthereumKeystoreV3 {
 		self.swift = swift
 	}
 	
-	@objc public init(password: String = "BANKEXFOUNDATION", aesMode: String = "aes-128-cbc") throws {
+	@objc public init(password: String, aesMode: String = "aes-128-cbc") throws {
 		guard let swift = try EthereumKeystoreV3(password: password, aesMode: aesMode) else { throw opt }
 		self.swift = swift
 	}
 	
-	@objc public init(privateKey: Data, password: String = "BANKEXFOUNDATION", aesMode: String = "aes-128-cbc") throws {
+	@objc public init(privateKey: Data, password: String, aesMode: String = "aes-128-cbc") throws {
 		guard let swift = try EthereumKeystoreV3(privateKey: privateKey, password: password, aesMode: aesMode) else { throw opt }
 		self.swift = swift
 	}

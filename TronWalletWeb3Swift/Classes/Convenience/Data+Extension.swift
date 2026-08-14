@@ -66,24 +66,26 @@ public extension Data {
     
     /// - Parameter length: Desired data length
     /// - Returns: Random data
+    /// - Important: Traps if the system CSPRNG fails. Current wallet callers derive
+    /// key material, so falling back to another generator would silently swap their
+    /// entropy source with no way for the caller to notice.
     static func random(length: Int) -> Data {
+        precondition(length >= 0, "Data.random: length must not be negative")
+        guard length > 0 else { return Data() }
         var data = Data(repeating: 0, count: length)
-        var success = false
-        #if !os(Linux)
-        let result = data.withUnsafeMutableBytes {
+        let status = data.withUnsafeMutableBytes {
             SecRandomCopyBytes(kSecRandomDefault, length, $0)
         }
-        success = result == errSecSuccess
-        #endif
-        guard !success else { return data }
-        data.withUnsafeMutableBytes { (bytes: UnsafeMutablePointer<UInt32>) in
-            for i in 0..<length/4+1 {
-                #if canImport(Darwin)
-                bytes[i] = arc4random()
-                #else
-                bytes[i] = UInt32(bitPattern: rand())
-                #endif
-            }
+        guard status == errSecSuccess else {
+            fatalError("Data.random: SecRandomCopyBytes failed with status \(status)")
+        }
+        // Short random values can legitimately be all zero with meaningful probability.
+        // Wallet callers request at least 16 bytes, where an all-zero result is a useful
+        // low-false-positive signal that the generator is broken.
+        // ponytail: only key-sized all-zero output is caught here. A real continuous
+        // health test belongs in one shared wallet layer, not in this extension.
+        guard length < 16 || data.contains(where: { $0 != 0 }) else {
+            fatalError("Data.random: CSPRNG returned an all-zero buffer")
         }
         return data
     }

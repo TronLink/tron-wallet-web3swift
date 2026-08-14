@@ -57,14 +57,15 @@ public class Guide {
     
     ```swift
     let mnemonics = Mnemonics()
-    let keystore = try BIP32Keystore(mnemonics: mnemonics)
+    let password = <#Wallet password#>
+    let keystore = try BIP32Keystore(mnemonics: mnemonics, password: password)
     let keystoreManager = KeystoreManager([keystore])
     let web3Rinkeby = Web3(infura: .rinkeby)
     web3Rinkeby.addKeystoreManager(keystoreManager) // attach a keystore if you want to sign locally. Otherwise unsigned request will be sent to remote node
     var options = Web3Options.default
     options.from = keystore.addresses.first! // specify from what address you want to send it
     let intermediateSend = try web3Rinkeby.contract(Web3Utils.coldWalletABI, at: coldWalletAddress).method(options: options) // an address with a private key attached in not different from any other address, just has very simple ABI
-    let sendResultBip32 = try intermediateSend.send(password: "BANKEXFOUNDATION")
+    let sendResultBip32 = try intermediateSend.send(password: password)
     ```
     
     
@@ -96,15 +97,15 @@ public class Guide {
 	```
 	let mnemonicsString = "nation tornado double since increase orchard tonight left drip talk sand mad"
 	let mnemonics = try! Mnemonics(mnemonicsString)
-	
-	let keystore = try! BIP32Keystore(mnemonics: mnemonics)
+	let password = <#Wallet password#>
+	let keystore = try! BIP32Keystore(mnemonics: mnemonics, password: password)
 	
 	// Now set keystore as your Web3.default keystore
 	Web3.default.keystoreManager.append(keystore)
 	
 	// Ganache using hdpath for its accounts. So to load next 9 subaccounts just use:
 	for _ in 0..<9 {
-		try keystore.createNewChildAccount()
+		try keystore.createNewChildAccount(password: password)
 	}
 	
 	// Now you can print them all:
@@ -130,7 +131,7 @@ public class Guide {
 	```
 	for address in web3.keystoreManager.addresses {
 		web3.eth.getBalancePromise(address: address).done { balance in
-			let privateKey: Data = try! web3.keystoreManager.UNSAFE_getPrivateKeyData(account: address)
+			let privateKey: Data = try! web3.keystoreManager.UNSAFE_getPrivateKeyData(password: password, account: address)
 			print("")
 			print("Address:", address)
 			print("Private key:", privateKey.hex.withHex)
@@ -190,7 +191,7 @@ public class Guide {
 	var options = Web3Options.default
 	options.from = keystore.addresses[0]
 	
-	let transaction = try web3.eth.sendETH(to: keystore.addresses[1], amount: BigUInt("10", units: .eth)!).send(options: options)
+	let transaction = try web3.eth.sendETH(to: keystore.addresses[1], amount: BigUInt("10", units: .eth)!).send(password: password, options: options)
 	print(transaction.hash)
 	// prints: 0x6f150015d033de944f17c1e1f63aa798bcbac7b9144f53520f4795596df84852
 	```
@@ -232,7 +233,7 @@ public class Guide {
     
     ```swift
     let mnemonics = Mnemonics()
-    print(mnemonics.string, BIP32Keystore(mnemonics: mnemonics).addresses[0])
+    print(mnemonics.string, BIP32Keystore(mnemonics: mnemonics, password: <#Wallet password#>).addresses[0])
     ```
     
     #### Save that mnemonics and address
@@ -267,7 +268,7 @@ public class Guide {
     let address: Address = "0xDf2bC70175311A6807F085e54881Fc4931359dBF"
     
     Web3.default = try .local(port: 8545)
-    Web3.default.keystoreManager = try KeystoreManager([BIP32Keystore(mnemonics: mnemonics)])
+    Web3.default.keystoreManager = try KeystoreManager([BIP32Keystore(mnemonics: mnemonics, password: <#Wallet password#>)])
     
     let balance = try Web3.default.eth.getBalance(address: address)
     
@@ -288,7 +289,7 @@ public class Guide {
     
     ```swift
     let mnemonics = Mnemonics()
-    let keystore = try! BIP32Keystore(mnemonics: mnemonics)
+    let keystore = try! BIP32Keystore(mnemonics: mnemonics, password: <#Wallet password#>)
     print(mnemonics.string)
     Web3.default.keystoreManager = KeystoreManager([keystore])
     ```
@@ -299,7 +300,8 @@ public class Guide {
     ```swift
     let mnemonicsString = "nation tornado double since increase orchard tonight left drip talk sand mad"
     let mnemonics = try Mnemonics(mnemonicsString)
-    let keystore = try! BIP32Keystore(mnemonics: mnemonics)
+    let password = <#Wallet password#>
+    let keystore = try! BIP32Keystore(mnemonics: mnemonics, password: password)
     Web3.default.keystoreManager = KeystoreManager([keystore])
     ```
     
@@ -308,7 +310,7 @@ public class Guide {
     > Note: You cannot get your mnemonics from your private key or keystore
     
     ```swift
-    let privateKey: Data = try keystore.UNSAFE_getPrivateKeyData(password: "", account: keystore.addresses[0])
+    let privateKey: Data = try keystore.UNSAFE_getPrivateKeyData(password: password, account: keystore.addresses[0])
     ```
     
     ## Use your account in web3swift
@@ -395,7 +397,8 @@ public class Guide {
 	```
 	Web3.default = try! .local(port: 8545)
 	let mnemonics = try! Mnemonics("figure champion above popular hint clump palace movie false common donate arrive")
-	let keystore = try! BIP32Keystore(mnemonics: mnemonics)
+	let password = <#Wallet password#>
+	let keystore = try! BIP32Keystore(mnemonics: mnemonics, password: password)
 	Web3.default.keystoreManager.append(keystore)
 	let address = keystore.addresses[0]
 	
@@ -410,7 +413,7 @@ public class Guide {
 	
 	var options = Web3Options.default
 	options.from = address
-	let transaction = try! contractAddress.send("setValue(uint256)", 20, options: options).wait()
+	let transaction = try! contractAddress.send("setValue(uint256)", 20, password: password, options: options).wait()
 	print("transaction hash:", transaction.hash)
 	
 	let readedValue = try! contractAddress.call("getValue()").wait().uint256()
@@ -554,7 +557,8 @@ public class Guide {
 	 Web3.default = try! .local(port: 8545)
 	
 	 // Creating account with your mnemonics
-	 let keystore = try! BIP32Keystore(mnemonics: mnemonics)
+	 let password = <#Wallet password#>
+	 let keystore = try! BIP32Keystore(mnemonics: mnemonics, password: password)
 	 Web3.default.keystoreManager.append(keystore)
 	 let address = keystore.addresses[0]
 	
@@ -570,7 +574,7 @@ public class Guide {
 	 // Sending transaction (setValue)
 	 var options = Web3Options.default
 	 options.from = address
-	 let transaction = try! contractAddress.send("setValue(uint256)", 20, options: options).wait()
+	 let transaction = try! contractAddress.send("setValue(uint256)", 20, password: password, options: options).wait()
 	 print("transaction hash:", transaction.hash)
 	
 	 // Calling getValue
@@ -614,5 +618,3 @@ public class Guide {
 	*/
 	public struct Security_tips {}
 }
-
-

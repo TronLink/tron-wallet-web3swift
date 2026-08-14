@@ -36,7 +36,16 @@ public class PrivateKey {
     
     /// Generates random private key. All generated keys are verified
     public init() {
-        self.privateKey = .random(length: 32)
+        self.privateKey = PrivateKey.generatePrivateKey()
+    }
+
+    static func generatePrivateKey(using randomBytes: () -> Data = { Data.random(length: 32) }) -> Data {
+        while true {
+            let privateKey = randomBytes()
+            if (try? SECP256K1.verifyPrivateKey(privateKey: privateKey)) != nil {
+                return privateKey
+            }
+        }
     }
     
     /// Init with private key data. run .verify() to verify it

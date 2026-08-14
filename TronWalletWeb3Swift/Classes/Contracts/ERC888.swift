@@ -44,13 +44,13 @@ function transfer(uint256 _id, address _to, uint256 _value) public returns (bool
 }
  */
 
-public class ERC888 {
+public class ERC888: PasswordProtected {
     /// Token address
     public let address: Address
     /// Transaction Options
     public var options: Web3Options = .default
     /// Password to unlock private key for sender address
-    public var password: String = "BANKEXFOUNDATION"
+    public var password: String?
     
     /// Represents Address as ERC888 token (with standard password and options)
     /// - Parameter address: Token address
@@ -81,7 +81,7 @@ public class ERC888 {
         public let parent: ERC888
         fileprivate var address: Address { return parent.address }
         fileprivate var options: Web3Options { return parent.options }
-        fileprivate var password: String { return parent.password }
+        fileprivate var password: String? { return parent.password }
         /**
          * Gas price functions if you want to see that
          * Automatically calls if options.gasPrice == nil */
@@ -129,7 +129,8 @@ public class ERC888 {
         public func transfer(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
             let arguments = [id, user, amount] as [Any]
             let web3 = Web3.default
-            return try address.send("transfer(uint256,address,uint256)", arguments, password: password, web3: web3, options: options).wait()
+            // This nested token forwards every contract property to its parent, password included.
+            return try address.send("transfer(uint256,address,uint256)", arguments, password: try parent.requirePassword(), web3: web3, options: options).wait()
         }
         
         /**

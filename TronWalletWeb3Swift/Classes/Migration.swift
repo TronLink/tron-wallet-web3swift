@@ -201,7 +201,7 @@ extension Web3 {
 
 extension BIP32Keystore {
     @available (*, deprecated: 2.0, message: "Use init with Mnemonics")
-    public convenience init(mnemonics: String, password: String = "BANKEXFOUNDATION", mnemonicsPassword: String = "", language: BIP39Language = .english, prefixPath: String = HDNode.defaultPathMetamaskPrefix) throws {
+    public convenience init(mnemonics: String, password: String, mnemonicsPassword: String = "", language: BIP39Language = .english, prefixPath: String = HDNode.defaultPathMetamaskPrefix) throws {
         let mnemonics = try Mnemonics(mnemonics, language: language)
         mnemonics.password = mnemonicsPassword
         try self.init(mnemonics: mnemonics, password: password, prefixPath: prefixPath)

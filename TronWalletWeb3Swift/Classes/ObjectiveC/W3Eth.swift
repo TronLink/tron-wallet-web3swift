@@ -16,7 +16,7 @@ import Foundation
     /// "from" field in "options" is mandatory for both local and remote signing.
     ///
     /// This function is synchronous!
-    @objc public func sendTransaction(_ transaction: W3EthereumTransaction, options: W3Options, password: String = "BANKEXFOUNDATION") throws -> W3TransactionSendingResult {
+    @objc public func sendTransaction(_ transaction: W3EthereumTransaction, options: W3Options, password: String) throws -> W3TransactionSendingResult {
         return try swift.sendTransaction(transaction.swift, options: options.swift, password: password).objc
     }
 

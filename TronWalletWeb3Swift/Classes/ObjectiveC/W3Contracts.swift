@@ -18,7 +18,7 @@ protocol W3OptionsInheritable: class {
 	}
 	@objc public let address: W3Address
 	@objc public var options: W3Options = .default
-	@objc public var password: String = "BANKEXFOUNDATION"
+	@objc public var password: String?
 	@objc public var gasPrice: W3ERC20GasPrice { return W3ERC20GasPrice(self) }
 	
 	@objc public init(address: W3Address) {
@@ -119,7 +119,7 @@ protocol W3OptionsInheritable: class {
 	}
 	@objc public let address: W3Address
 	@objc public var options: W3Options = .default
-	@objc public var password: String = "BANKEXFOUNDATION"
+	@objc public var password: String?
 	@objc public var gasPrice: W3ERC721GasPrice { return W3ERC721GasPrice(self) }
 	
 	@objc public init(address: W3Address) {
@@ -207,7 +207,7 @@ Gas price functions for erc721 token requests
 	}
 	@objc public let address: W3Address
 	@objc public var options: W3Options = .default
-	@objc public var password: String = "BANKEXFOUNDATION"
+	@objc public var password: String?
 	@objc public var gasPrice: W3ERC777GasPrice { return W3ERC777GasPrice(self) }
 	
 	@objc public init(address: W3Address) {

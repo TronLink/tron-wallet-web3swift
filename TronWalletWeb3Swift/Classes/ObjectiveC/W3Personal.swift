@@ -19,7 +19,7 @@ import Foundation
      - Important: This call is synchronous
      
      */
-    @objc public func signPersonalMessage(message: Data, from: W3Address, password: String = "BANKEXFOUNDATION") throws -> Data {
+    @objc public func signPersonalMessage(message: Data, from: W3Address, password: String) throws -> Data {
         return try swift.signPersonalMessage(message: message, from: from.swift, password: password)
     }
     
@@ -33,7 +33,7 @@ import Foundation
      - Important: This call is synchronous. Does nothing if private keys are stored locally.
      
      */
-    @objc public func unlockAccount(account: W3Address, password: String = "BANKEXFOUNDATION", seconds: UInt64 = 300, error pointer: ErrorPointer) -> Bool {
+    @objc public func unlockAccount(account: W3Address, password: String, seconds: UInt64 = 300, error pointer: ErrorPointer) -> Bool {
         do {
             return try swift.unlockAccount(account: account.swift, password: password, seconds: seconds)
         } catch {

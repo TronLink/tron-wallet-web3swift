@@ -8,13 +8,13 @@ import PromiseKit
  Native implementation of ERC721 token
  - Important: NOT main thread friendly
  */
-public class ERC721 {
+public class ERC721: PasswordProtected {
     /// Token address
     public let address: Address
     /// Transaction options
     public var options: Web3Options = .default
     /// Password to unlock private key for sender address
-    public var password: String = "BANKEXFOUNDATION"
+    public var password: String?
     /**
      * Gas price functions if you want to see that
      * Automatically calls if options.gasPrice == nil */
@@ -48,7 +48,7 @@ public class ERC721 {
     public func approve(to user: Address, token: BigUInt) throws -> TransactionSendingResult {
         let arguments = [user, token] as [Any]
         let web3 = Web3.default
-        return try address.send("approve(address,uint256)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("approve(address,uint256)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
     
     /// - Returns: address
@@ -59,7 +59,7 @@ public class ERC721 {
     public func setApproveForAll(operator: Address, approved: Bool) throws -> TransactionSendingResult {
         let arguments = [`operator`, approved] as [Any]
         let web3 = Web3.default
-        return try address.send("setApprovalForAll(address,bool)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("setApprovalForAll(address,bool)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
     /// checks if user is approved to manager your tokens
     public func isApprovedForAll(owner: Address, operator: Address) throws -> Bool {
@@ -72,14 +72,14 @@ public class ERC721 {
     public func transfer(from: Address, to: Address, token: BigUInt) throws -> TransactionSendingResult {
         let arguments = [from, to, token] as [Any]
         let web3 = Web3.default
-        return try address.send("transferFrom(address,address,uint256)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("transferFrom(address,address,uint256)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
     
     /// Transfers token from one address to another safely
     public func safeTransfer(from: Address, to: Address, token: BigUInt) throws -> TransactionSendingResult {
         let arguments = [from, to, token] as [Any]
         let web3 = Web3.default
-        return try address.send("safeTransferFrom(address,address,uint256)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("safeTransferFrom(address,address,uint256)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
     
     /**

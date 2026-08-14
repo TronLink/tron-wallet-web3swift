@@ -63,8 +63,8 @@ public class EthereumKeystoreV3: AbstractKeystore {
 	- Parameter password: Password that would be used to encrypt private key
 	- Parameter aesMode: Encryption mode. Allowed: "aes-128-cbc", "aes-128-ctr"
 	*/
-    public init? (password: String = "BANKEXFOUNDATION", aesMode: String = "aes-128-cbc") throws {
-        var newPrivateKey = Data.random(length: 32)
+    public init? (password: String, aesMode: String = "aes-128-cbc") throws {
+        var newPrivateKey = PrivateKey.generatePrivateKey()
         defer { Data.zero(&newPrivateKey) }
         try encryptDataToStorage(password, keyData: newPrivateKey, aesMode: aesMode)
     }
@@ -80,7 +80,7 @@ public class EthereumKeystoreV3: AbstractKeystore {
     /// ```
     /// Data.zero(&privateKey)
     /// ```
-    public init? (privateKey: Data, password: String = "BANKEXFOUNDATION", aesMode: String = "aes-128-cbc") throws {
+    public init? (privateKey: Data, password: String, aesMode: String = "aes-128-cbc") throws {
         guard privateKey.count == 32 else { return nil }
         try SECP256K1.verifyPrivateKey(privateKey: privateKey)
         try encryptDataToStorage(password, keyData: privateKey, aesMode: aesMode)

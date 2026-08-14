@@ -6,13 +6,13 @@ import BigInt
  Native implementation of ERC777 token
  - Important: NOT main thread friendly
  */
-public class ERC777 {
+public class ERC777: PasswordProtected {
 	/// Token address
 	public let address: Address
 	/// Transaction options
 	public var options: Web3Options = .default
 	/// Password to unlock private key for sender address
-	public var password: String = "BANKEXFOUNDATION"
+	public var password: String?
 	/**
 	* Gas price functions if you want to see that
 	* Automatically calls if options.gasPrice == nil */
@@ -94,7 +94,7 @@ public class ERC777 {
     public func transfer(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
         let arguments = [user, amount] as [Any]
         let web3 = Web3.default
-        return try address.send("transfer(address,uint256)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("transfer(address,uint256)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
     
     /**
@@ -113,7 +113,7 @@ public class ERC777 {
     public func approve(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
         let arguments = [user, amount] as [Any]
         let web3 = Web3.default
-        return try address.send("approve(address,uint256)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("approve(address,uint256)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
     
     /**
@@ -134,7 +134,7 @@ public class ERC777 {
     public func transfer(from: Address, to: Address, amount: BigUInt) throws -> TransactionSendingResult {
         let arguments = [from, to, amount] as [Any]
         let web3 = Web3.default
-        return try address.send("transferFrom(address,address,uint256)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("transferFrom(address,address,uint256)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
     
     /**
@@ -152,7 +152,7 @@ public class ERC777 {
     public func send(to user: Address, amount: BigUInt) throws -> TransactionSendingResult {
         let arguments = [user, amount] as [Any]
         let web3 = Web3.default
-        return try address.send("send(address,uint256)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("send(address,uint256)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
     /**
      Sends to user some amount of tokens and call some function
@@ -170,7 +170,7 @@ public class ERC777 {
     public func send(to user: Address, amount: BigUInt, userData: Data) throws -> TransactionSendingResult {
         let arguments = [user, amount, userData] as [Any]
         let web3 = Web3.default
-        return try address.send("send(address,uint256,bytes)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("send(address,uint256,bytes)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
     
     /**
@@ -185,7 +185,7 @@ public class ERC777 {
      ```
      */
     public func authorize(operator user: Address) throws -> TransactionSendingResult {
-        return try address.send("authorizeOperator(address)",user, password: password, web3: Web3.default, options: options).wait()
+        return try address.send("authorizeOperator(address)",user, password: try requirePassword(), web3: Web3.default, options: options).wait()
     }
     /**
      Revokes operator
@@ -199,7 +199,7 @@ public class ERC777 {
      ```
      */
     public func revoke(operator user: Address) throws -> TransactionSendingResult {
-        return try address.send("revokeOperator(address)",user, password: password, web3: Web3.default, options: options).wait()
+        return try address.send("revokeOperator(address)",user, password: try requirePassword(), web3: Web3.default, options: options).wait()
     }
     
     /**
@@ -237,7 +237,7 @@ public class ERC777 {
     public func operatorSend(from: Address, to: Address, amount: BigUInt, userData: Data) throws -> TransactionSendingResult {
         let arguments = [from, to, amount, userData] as [Any]
         let web3 = Web3.default
-        return try address.send("operatorSend(address,address,uint256,bytes)", arguments, password: password, web3: web3, options: options).wait()
+        return try address.send("operatorSend(address,address,uint256,bytes)", arguments, password: try requirePassword(), web3: web3, options: options).wait()
     }
 	
 	/**

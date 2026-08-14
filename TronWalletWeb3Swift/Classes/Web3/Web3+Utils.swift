@@ -97,7 +97,8 @@ extension Web3Utils {
     /// Returns 20 bytes of address data.
     public static func publicToAddressData(_ publicKey: Data) throws -> Data {
         if publicKey.count == 33 {
-            let decompressedKey = try SECP256K1.combineSerializedPublicKeys(keys: [publicKey], outputCompressed: false)
+            var parsedPublicKey = try SECP256K1.parsePublicKey(serializedKey: publicKey)
+            let decompressedKey = try SECP256K1.serializePublicKey(publicKey: &parsedPublicKey, compressed: false)
             return try publicToAddressData(decompressedKey)
         } else {
             var stipped = publicKey

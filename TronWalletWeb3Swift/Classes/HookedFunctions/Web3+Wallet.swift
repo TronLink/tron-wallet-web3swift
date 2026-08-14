@@ -47,7 +47,7 @@ public class Web3Wallet {
     /// - Throws:
     /// AbstractKeystoreError
     /// Error
-    public func signTX(transaction: inout EthereumTransaction, account: Address, password: String = "BANKEXFOUNDATION") throws {
+    public func signTX(transaction: inout EthereumTransaction, account: Address, password: String) throws {
         let keystoreManager = self.web3.provider.attachedKeystoreManager
         try Web3Signer.signTX(transaction: &transaction, keystore: keystoreManager, account: account, password: password)
     }
@@ -60,7 +60,7 @@ public class Web3Wallet {
     /// - Returns: Signed message
     /// - Throws: SECP256K1Error
     /// DataError.hexStringCorrupted(String)
-    public func signPersonalMessage(_ personalMessage: String, account: Address, password: String = "BANKEXFOUNDATION") throws -> Data {
+    public func signPersonalMessage(_ personalMessage: String, account: Address, password: String) throws -> Data {
         let data = try personalMessage.dataFromHex()
         return try signPersonalMessage(data, account: account, password: password)
     }
@@ -71,7 +71,7 @@ public class Web3Wallet {
     /// - Parameter password: Password to decrypt account's private key
     /// - Returns: Signed message
     /// - Throws: SECP256K1Error
-    public func signPersonalMessage(_ personalMessage: Data, account: Address, password: String = "BANKEXFOUNDATION") throws -> Data {
+    public func signPersonalMessage(_ personalMessage: Data, account: Address, password: String) throws -> Data {
         let keystoreManager = self.web3.provider.attachedKeystoreManager
         return try Web3Signer.signPersonalMessage(personalMessage, keystore: keystoreManager, account: account, password: password)
     }

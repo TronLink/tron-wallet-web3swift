@@ -208,7 +208,7 @@ extension TransactionIntermediate {
      - Important: This call is synchronous
      */
     @discardableResult
-    @objc public func send(password: String = "BANKEXFOUNDATION", options: W3Options?, onBlock: String = "pending") throws -> W3TransactionSendingResult {
+    @objc public func send(password: String, options: W3Options?, onBlock: String = "pending") throws -> W3TransactionSendingResult {
         return try swift.send(password: password, options: options?.swift, onBlock: onBlock).objc
     }
     
@@ -278,7 +278,7 @@ extension TransactionIntermediate {
      
      - Returns: Promise for TransactionResult which contains transaction hash and other info
      */
-    @objc public func sendAsync(password: String = "BANKEXFOUNDATION", options: W3Options?, onBlock: String = "pending", completion: @escaping  (W3TransactionSendingResult?,Error?)->()) {
+    @objc public func sendAsync(password: String, options: W3Options?, onBlock: String = "pending", completion: @escaping  (W3TransactionSendingResult?,Error?)->()) {
         
         swift.sendPromise(password: password, options: options?.swift, onBlock: onBlock)
             .done { completion($0.objc,nil) }

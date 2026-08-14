@@ -24,14 +24,17 @@ struct Base58 {
             var carry = Int(b)
             var i = 0
 
-            for j in 0 ... base58.count - 1 where carry != 0 || i < length {
+            for j in 0 ..< base58.count where carry != 0 || i < length {
                 carry += 256 * Int(base58[base58.count - j - 1])
                 base58[base58.count - j - 1] = UInt8(carry % 58)
                 carry /= 58
                 i += 1
             }
 
-            assert(carry == 0)
+            // 138/100 exceeds log(256)/log(58), so the buffer always holds the result.
+            // A leftover carry would silently truncate an address, so fail closed here
+            // rather than in an assert the release build strips out.
+            precondition(carry == 0, "Base58 encoding overflowed its buffer")
 
             length = i
         }
@@ -71,7 +74,10 @@ struct Base58 {
             zerosCount += 1
         }
 
-        let size = string.lengthOfBytes(using: String.Encoding.utf8) * 733 / 1000 + 1 - zerosCount
+        // Leading '1's decode to zero bytes that are prepended at the end, so they are
+        // excluded from the count instead of subtracted from it: subtracting made the
+        // size negative for inputs that are mostly '1's.
+        let size = (string.count - zerosCount) * 733 / 1000 + 1
         var base58: [UInt8] = Array(repeating: 0, count: size)
         for c in string where c != " " {
             // search for base58 character
@@ -79,14 +85,16 @@ struct Base58 {
 
             var carry = base58Index.encodedOffset
             var i = 0
-            for j in 0 ... base58.count where carry != 0 || i < length {
+            for j in 0 ..< base58.count where carry != 0 || i < length {
                 carry += 58 * Int(base58[base58.count - j - 1])
                 base58[base58.count - j - 1] = UInt8(carry % 256)
                 carry /= 256
                 i += 1
             }
 
-            assert(carry == 0)
+            // Input is untrusted here, so an overflow is a malformed string rather than
+            // a programming error: report it the same way an invalid character is.
+            guard carry == 0 else { return [] }
             length = i
         }
 
